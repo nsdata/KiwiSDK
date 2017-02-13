@@ -17,7 +17,6 @@
 
 @interface KWVideoShowViewController ()<GPUImageVideoCameraDelegate>
 @property (nonatomic, strong) GPUImageStillCamera *videoCamera;
-@property (nonatomic, strong) GPUImageRawDataOutput *mOutput;
 @property (nonatomic, strong) GPUImageMovieWriter *movieWriter;
 @property (nonatomic, strong) GPUImageView *previewView;
 @property (nonatomic, strong) NSURL *movieURL;
