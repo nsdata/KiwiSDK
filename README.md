@@ -13,9 +13,9 @@ Kiwi人脸跟踪及特效（贴纸、美颜、滤镜、哈哈镜）在声网SDK�
 
 ## 三. 开发指南
 
- [Wiki](https://github.com/kiwi-face/KWQiniuDemo_iOS/blob/master/doc/ios-instruction.md)                                                                                                                                                                                                                         
+ [Wiki](https://github.com/kiwi-face/KWFaceDemo_iOS/blob/master/doc/ios-instruction.md)                                                                                                                                                                                                                         
 
 ## 四. 反馈与建议
 
-- Issues: [https://github.com/kiwi-face/KWQiniuDemo_iOS/issues](https://github.com/kiwi-face/KWQiniuDemo_iOS/issues)
+- Issues: [https://github.com/kiwi-face/KWFaceDemo_iOS/issues](https://github.com/kiwi-face/KWFaceDemo_iOS/issues)
 
