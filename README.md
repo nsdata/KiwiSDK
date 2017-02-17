@@ -1,4 +1,4 @@
-# KWAgoraDemo_iOS
+# KWFaceDemo_iOS
 Kiwi人脸跟踪及特效（贴纸、美颜、滤镜、哈哈镜）在声网SDK中的集成demo - iOS版
 
 ## 
