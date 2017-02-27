@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		164DFFFD1E49A2EF00AC0FC0 /* 2017_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 164DFFFC1E49A2EF00AC0FC0 /* 2017_icon.png */; };
+		168454B21E55A22B00F02736 /* libfaceTrackerSDK_release.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168454B11E55A22B00F02736 /* libfaceTrackerSDK_release.a */; };
+		168454B41E55A23A00F02736 /* libKiwiFaceSDK_release.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168454B31E55A23A00F02736 /* libKiwiFaceSDK_release.a */; };
+		168454B61E55A25000F02736 /* libGPUImage_release.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168454B51E55A25000F02736 /* libGPUImage_release.a */; };
 		1688351A1E45BE300016210E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 168835191E45BE300016210E /* main.m */; };
 		1688351D1E45BE300016210E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1688351C1E45BE300016210E /* AppDelegate.m */; };
 		168835201E45BE300016210E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1688351F1E45BE300016210E /* ViewController.m */; };
@@ -15,10 +18,8 @@
 		168835251E45BE300016210E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 168835241E45BE300016210E /* Assets.xcassets */; };
 		168835281E45BE300016210E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 168835261E45BE300016210E /* LaunchScreen.storyboard */; };
 		168835341E45C4070016210E /* KWVideoShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 168835331E45C4070016210E /* KWVideoShowViewController.m */; };
-		168839F61E45C9390016210E /* libGPUImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168835DF1E45C9380016210E /* libGPUImage.a */; };
 		168839F71E45C9390016210E /* KiwiFaceSDK.m in Sources */ = {isa = PBXBuildFile; fileRef = 168835E11E45C9380016210E /* KiwiFaceSDK.m */; };
 		168839F81E45C9390016210E /* KiwiFaceSDK_UI.m in Sources */ = {isa = PBXBuildFile; fileRef = 168835E31E45C9380016210E /* KiwiFaceSDK_UI.m */; };
-		168839F91E45C9390016210E /* libKiwiFaceSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168835E41E45C9380016210E /* libKiwiFaceSDK.a */; };
 		168839FA1E45C9390016210E /* compare.cc in Sources */ = {isa = PBXBuildFile; fileRef = 168835FE1E45C9380016210E /* compare.cc */; };
 		168839FB1E45C9390016210E /* compare_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = 168835FF1E45C9380016210E /* compare_common.cc */; };
 		168839FC1E45C9390016210E /* compare_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 168836001E45C9380016210E /* compare_gcc.cc */; };
@@ -71,7 +72,6 @@
 		16883D311E45C93A0016210E /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1688396C1E45C9380016210E /* unzip.c */; };
 		16883D321E45C93A0016210E /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1688396E1E45C9380016210E /* zip.c */; };
 		16883D331E45C93A0016210E /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 168839711E45C9380016210E /* SSZipArchive.m */; };
-		16883D351E45C93A0016210E /* libfaceTrackerSDK_lic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168839751E45C9380016210E /* libfaceTrackerSDK_lic.a */; };
 		16883D391E45C93A0016210E /* KWDICollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1688397D1E45C9390016210E /* KWDICollectionViewCell.m */; };
 		16883D3A1E45C93A0016210E /* KWLJCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1688397F1E45C9390016210E /* KWLJCollectionViewCell.m */; };
 		16883D3B1E45C93A0016210E /* KWTextCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 168839811E45C9390016210E /* KWTextCollectionViewCell.m */; };
@@ -196,6 +196,9 @@
 
 /* Begin PBXFileReference section */
 		164DFFFC1E49A2EF00AC0FC0 /* 2017_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2017_icon.png; sourceTree = "<group>"; };
+		168454B11E55A22B00F02736 /* libfaceTrackerSDK_release.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libfaceTrackerSDK_release.a; sourceTree = "<group>"; };
+		168454B31E55A23A00F02736 /* libKiwiFaceSDK_release.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libKiwiFaceSDK_release.a; sourceTree = "<group>"; };
+		168454B51E55A25000F02736 /* libGPUImage_release.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGPUImage_release.a; sourceTree = "<group>"; };
 		168835151E45BE300016210E /* KiwifaceRecordingDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KiwifaceRecordingDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		168835191E45BE300016210E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1688351B1E45BE300016210E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -374,12 +377,10 @@
 		168835DC1E45C9380016210E /* GPUImagePicture+TextureSubimage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GPUImagePicture+TextureSubimage.h"; sourceTree = "<group>"; };
 		168835DD1E45C9380016210E /* GPUImagePicture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUImagePicture.h; sourceTree = "<group>"; };
 		168835DE1E45C9380016210E /* GPUImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUImageView.h; sourceTree = "<group>"; };
-		168835DF1E45C9380016210E /* libGPUImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGPUImage.a; sourceTree = "<group>"; };
 		168835E01E45C9380016210E /* KiwiFaceSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KiwiFaceSDK.h; sourceTree = "<group>"; };
 		168835E11E45C9380016210E /* KiwiFaceSDK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KiwiFaceSDK.m; sourceTree = "<group>"; };
 		168835E21E45C9380016210E /* KiwiFaceSDK_UI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KiwiFaceSDK_UI.h; sourceTree = "<group>"; };
 		168835E31E45C9380016210E /* KiwiFaceSDK_UI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KiwiFaceSDK_UI.m; sourceTree = "<group>"; };
-		168835E41E45C9380016210E /* libKiwiFaceSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libKiwiFaceSDK.a; sourceTree = "<group>"; };
 		168835E81E45C9380016210E /* basic_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = basic_types.h; sourceTree = "<group>"; };
 		168835E91E45C9380016210E /* compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compare.h; sourceTree = "<group>"; };
 		168835EA1E45C9380016210E /* compare_row.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compare_row.h; sourceTree = "<group>"; };
@@ -486,7 +487,6 @@
 		168839701E45C9380016210E /* SSZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSZipArchive.h; sourceTree = "<group>"; };
 		168839711E45C9380016210E /* SSZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSZipArchive.m; sourceTree = "<group>"; };
 		168839731E45C9380016210E /* FaceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceTracker.h; sourceTree = "<group>"; };
-		168839751E45C9380016210E /* libfaceTrackerSDK_lic.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libfaceTrackerSDK_lic.a; sourceTree = "<group>"; };
 		1688397C1E45C9390016210E /* KWDICollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWDICollectionViewCell.h; sourceTree = "<group>"; };
 		1688397D1E45C9390016210E /* KWDICollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWDICollectionViewCell.m; sourceTree = "<group>"; };
 		1688397E1E45C9390016210E /* KWLJCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWLJCollectionViewCell.h; sourceTree = "<group>"; };
@@ -619,12 +619,12 @@
 			files = (
 				16883DB91E45CAA70016210E /* Foundation.framework in Frameworks */,
 				16883DB41E45CA3D0016210E /* AVFoundation.framework in Frameworks */,
+				168454B61E55A25000F02736 /* libGPUImage_release.a in Frameworks */,
 				16AEF5431E516C6000DC3ADC /* opencv2.framework in Frameworks */,
+				168454B41E55A23A00F02736 /* libKiwiFaceSDK_release.a in Frameworks */,
 				16883DB21E45CA0C0016210E /* libz.tbd in Frameworks */,
 				16883DB01E45C9FC0016210E /* AssetsLibrary.framework in Frameworks */,
-				168839F61E45C9390016210E /* libGPUImage.a in Frameworks */,
-				16883D351E45C93A0016210E /* libfaceTrackerSDK_lic.a in Frameworks */,
-				168839F91E45C9390016210E /* libKiwiFaceSDK.a in Frameworks */,
+				168454B21E55A22B00F02736 /* libfaceTrackerSDK_release.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -679,13 +679,13 @@
 		168835351E45C9370016210E /* KiwiFaceSDK */ = {
 			isa = PBXGroup;
 			children = (
+				168454B31E55A23A00F02736 /* libKiwiFaceSDK_release.a */,
 				16AEF5411E516C3500DC3ADC /* Frameworks */,
 				168835361E45C9370016210E /* GPUImage */,
 				168835E01E45C9380016210E /* KiwiFaceSDK.h */,
 				168835E11E45C9380016210E /* KiwiFaceSDK.m */,
 				168835E21E45C9380016210E /* KiwiFaceSDK_UI.h */,
 				168835E31E45C9380016210E /* KiwiFaceSDK_UI.m */,
-				168835E41E45C9380016210E /* libKiwiFaceSDK.a */,
 				168835E51E45C9380016210E /* NV12YUV */,
 				1688362A1E45C9380016210E /* Render */,
 				1688363A1E45C9380016210E /* StickerManager */,
@@ -699,6 +699,7 @@
 		168835361E45C9370016210E /* GPUImage */ = {
 			isa = PBXGroup;
 			children = (
+				168454B51E55A25000F02736 /* libGPUImage_release.a */,
 				168835371E45C9370016210E /* GLProgram.h */,
 				168835381E45C9370016210E /* GPUImage.h */,
 				168835391E45C9370016210E /* GPUImage3x3ConvolutionFilter.h */,
@@ -860,7 +861,6 @@
 				168835D51E45C9380016210E /* GPUImageXYDerivativeFilter.h */,
 				168835D61E45C9380016210E /* GPUImageZoomBlurFilter.h */,
 				168835D71E45C9380016210E /* iOS */,
-				168835DF1E45C9380016210E /* libGPUImage.a */,
 			);
 			path = GPUImage;
 			sourceTree = "<group>";
@@ -1064,9 +1064,9 @@
 		168839721E45C9380016210E /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				168454B11E55A22B00F02736 /* libfaceTrackerSDK_release.a */,
 				16883DAC1E45C9810016210E /* models */,
 				168839731E45C9380016210E /* FaceTracker.h */,
-				168839751E45C9380016210E /* libfaceTrackerSDK_lic.a */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";

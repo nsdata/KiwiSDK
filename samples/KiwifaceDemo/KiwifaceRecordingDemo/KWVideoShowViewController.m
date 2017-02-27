@@ -105,10 +105,10 @@
     {
 
         //拍照
-        [__weakSelf takePhoto:sender];
+//        [__weakSelf takePhoto:sender];
 
         //录制视频
-//        [__weakSelf recordVideo:sender];
+        [__weakSelf recordVideo:sender];
         
     };
 
