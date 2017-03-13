@@ -29,6 +29,7 @@
 @property (nonatomic, assign) size_t outputheight;
 
 @property (nonatomic, strong) UILabel *labRecordState;
+@property (nonatomic, strong) dispatch_queue_t sessionQueue;
 
 @end
 
@@ -56,6 +57,7 @@
     
     self.kwSdkUI = [KiwiFaceSDK_UI shareManagerUI];
     self.kwSdkUI.kwSdk = [KiwiFaceSDK sharedManager];
+    self.kwSdkUI.kwSdk.cameraPositionBack  = NO;
     if([KWRenderer isSdkInitFailed]){
         //        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"错误提示" message:@"使用 license 文件生成激活码时失败，可能是授权文件过期。" delegate:nil cancelButtonTitle:@"好的" otherButtonTitles:nil, nil];
         //
@@ -65,7 +67,7 @@
     
     [self.kwSdkUI setViewDelegate:self];
     [self.kwSdkUI.kwSdk initSdk];
-    self.kwSdkUI.kwSdk.cameraPositionBack  = NO;
+
     self.videoCamera.horizontallyMirrorFrontFacingCamera = YES;
     self.videoCamera.horizontallyMirrorRearFacingCamera = NO;
     self.kwSdkUI.isClearOldUI = YES;
@@ -77,6 +79,8 @@
     
     [self.kwSdkUI initSDKUI];
     
+    [self.kwSdkUI setCloseVideoBtnHidden:NO];
+    
     __blockSelf = self;
     __weakSelf = __blockSelf;
     
@@ -87,26 +91,34 @@
 
                 __weakSelf.kwSdkUI.kwSdk.cameraPositionBack  = !__weakSelf.kwSdkUI.kwSdk.cameraPositionBack;
                 [__weakSelf.videoCamera rotateCamera];
-        
-        /* 关闭影像页面 */
-//        [__weakSelf dismissViewControllerAnimated:YES completion:^{
-//
-//            [__weakSelf.kwSdkUI popAllView];
-//            
-//            /* 内存释放 */
-//            [KiwiFaceSDK releaseManager];
-//            __weakSelf.kwSdkUI.kwSdk.renderer = nil;
-//            __weakSelf.kwSdkUI.kwSdk = nil;
-//        }];
+    };
     
+    self.kwSdkUI.closeVideoBtnBlock = ^(void)
+    {
+        [__weakSelf dismissViewControllerAnimated:YES completion:^{
+            [[NSNotificationCenter defaultCenter] removeObserver:__weakSelf name:kReachabilityChangedNotification object:nil];
+            if (__weakSelf.sessionQueue) {
+                dispatch_sync(__weakSelf.sessionQueue, ^{
+                });
+            }
+            
+            __weakSelf.sessionQueue = nil;
+            
+            [__weakSelf.kwSdkUI popAllView];
+            
+            
+            __weakSelf.kwSdkUI.kwSdk.renderer = nil;
+            __weakSelf.kwSdkUI.kwSdk = nil;
+        }];
+    };
+    //拍照
+    self.kwSdkUI.takePhotoBtnTapBlock = ^(UIButton *sender)
+    {
+        [__weakSelf takePhoto:sender];
     };
     
     __weakSdkUI.offPhoneBlock = ^(UIButton *sender)
     {
-
-        //拍照
-//        [__weakSelf takePhoto:sender];
-
         //录制视频
         [__weakSelf recordVideo:sender];
         
@@ -295,7 +307,7 @@
                                                            delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
             
-            
+            [self.kwSdkUI setCloseBtnEnable:YES];
             [btnRecord setEnabled:YES];
             [self.labRecordState setHidden:YES];
             
@@ -341,6 +353,7 @@
                                                                     delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                      [alert show];
                  }
+                 [self.kwSdkUI setCloseBtnEnable:YES];
                  [btnRecord setEnabled:YES];
                  [self.labRecordState setHidden:YES];
                  [self.videoCamera removeTarget:self.movieWriter];
@@ -354,6 +367,7 @@
                                                        delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
         
+        [self.kwSdkUI setCloseBtnEnable:YES];
         [btnRecord setEnabled:YES];
         [self.labRecordState setHidden:YES];
         
@@ -371,6 +385,7 @@
         sender.selected = NO;
         sender.enabled = NO;
         [self.labRecordState setText:@"正在保存视频..."];
+        [self.kwSdkUI setCloseBtnEnable:NO];
         if (self.kwSdkUI.kwSdk.currentStickerIndex >= 0) {
             [self.kwSdkUI.kwSdk.filters.lastObject removeTarget:self.movieWriter];
         }

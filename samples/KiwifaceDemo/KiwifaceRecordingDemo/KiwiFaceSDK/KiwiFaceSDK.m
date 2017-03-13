@@ -8,8 +8,6 @@
 
 #import "KiwiFaceSDK.h"
 
-
-
 #import "KWStickerDownloadManager.h"
 
 #import "SlimFaceDistortionFilter.h"
@@ -22,8 +20,10 @@
 #import "SmallFaceBigEyeFilter.h"
 
 #import "KWStickerRenderer.h"
-
-
+#import "KWPresentStickerRenderer.h"
+#import "KWPresentStickerManager.h"
+#import "KWSmiliesStickerRenderer.h"
+#import "KWColorFilterManager.h"
 
 #import "Global.h"
 
@@ -53,20 +53,25 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
 #endif
     
     
-//    static dispatch_once_t predicate;
-//    dispatch_once(&predicate, ^{
+    //    static dispatch_once_t predicate;
+    //    dispatch_once(&predicate, ^{
     if (sharedAccountManagerInstance == nil) {
         sharedAccountManagerInstance = [[KiwiFaceSDK alloc] init];
         sharedAccountManagerInstance.renderer = [KWRenderer new];
     }
-        
-//    });
+    
+    //    });
     return sharedAccountManagerInstance;
 }
 
 + (void)releaseManager
 {
     [(KWStickerRenderer *)sharedAccountManagerInstance.filters[1] setSticker:nil];
+    
+    ((KWPresentStickerRenderer *)sharedAccountManagerInstance.filters[2]).presentStickerRendererPlayOverBlock = nil;
+    ((KWSmiliesStickerRenderer *)sharedAccountManagerInstance.filters[3]).smiliesStickerRendererPlayOverBlock = nil;
+    [(KWPresentStickerRenderer *)sharedAccountManagerInstance.filters[2] setSticker:nil];
+    [(KWSmiliesStickerRenderer *)sharedAccountManagerInstance.filters[3] setSticker:nil];
     [sharedAccountManagerInstance.renderer removeAllFilters];
     
     sharedAccountManagerInstance.renderer = nil;
@@ -83,8 +88,6 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
     
     sharedAccountManagerInstance.stickers = nil;
     sharedAccountManagerInstance.distortionTitleInfosArr = nil;
-    sharedAccountManagerInstance.globalBeatifyFilterTitleInfosArr = nil;
-    sharedAccountManagerInstance.textArr = nil;
     sharedAccountManagerInstance = nil;
     
 }
@@ -103,18 +106,59 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
         [self.renderer removeAllFilters];
         
         self.currentStickerIndex = -2;
+        self.currentPresentStickerIndex = -2;
+    
+        __weak typeof (self) __weakSelf = self;
         
         //加载贴图模板并且默认选择第一张模板贴图
         [[KWStickerManager sharedManager] loadStickersWithCompletion:^(NSMutableArray<KWSticker *> *stickers) {
-            self.stickers = stickers;
-//            [(KWStickerRenderer *)self.filters[1] setSticker:[stickers firstObject]];
-                //贴纸信息读取完成
+            __weakSelf.stickers = stickers;
+            //            [(KWStickerRenderer *)self.filters[1] setSticker:[stickers firstObject]];
+            //贴纸信息读取完成
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"KW_STICKERSLOADED_COMPLETE" object:nil];
+            });
         }];
+        
+        //        加载贴图模板并且默认选择第一张模板贴图
+        [[KWPresentStickerManager sharedManager] loadStickersWithCompletion:^(NSMutableArray<KWSticker *> *stickers) {
+            __weakSelf.presentStickers = stickers;
+            //            [(KWStickerRenderer *)self.filters[1] setSticker:[stickers firstObject]];
+            //贴纸信息读取完成
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"KW_STICKERSLOADED_COMPLETE" object:nil];
+            });
+        }];
+        
+        [[KWColorFilterManager sharedManager] loadColorFiltersWithCompletion:^(NSMutableArray<KWColorFilter *> *colorFilters) {
+            __weakSelf.lookupFilters = colorFilters;
+            
+//            if ([__weakSelf.lookupFilters count] > 0) {
+//                __weakSelf.currentLookupFilter = [__weakSelf.lookupFilters objectAtIndex:0];
+//                 [__weakSelf onFilterChanged:0];
+//            }
+//            else
+//            {
+                [__weakSelf onFilterChanged:-1];
+//            }
+            
+            //全局滤镜信息读取完成
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"KW_COLORFILTERSLOADED_COMPLETE" object:nil];
+            });
+            
+        }];
+        
+        
         //普通滤镜或贴纸集合（需要人脸）
         self.filters = @[
                          [KWPointsRenderer new],
-                         [KWStickerRenderer new]
+                         [KWStickerRenderer new],
+                         [KWPresentStickerRenderer new],
+                         [KWSmiliesStickerRenderer new]
                          ];
         
         /* 哈哈镜滤镜集合*/
@@ -129,10 +173,10 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
         
         //美颜滤镜集合
         self.beautifyFilters = @[
-//                                 [GPUImageBulgeEyeFilter new],
-//                                 [GPUImageThinFaceFilter new],
+                                 //                                 [GPUImageBulgeEyeFilter new],
+                                 //                                 [GPUImageThinFaceFilter new],
                                  [SmallFaceBigEyeFilter new]
-//                                 [GPUImageBeautifyFilter new]
+                                 //                                 [GPUImageBeautifyFilter new]
                                  ];
         
         self.beautifyNewFilters = @[
@@ -141,41 +185,75 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
                                     ];
 
         //全局滤镜集合（不需要人脸）
-        self.lookupFilters = @[
-                               [[KWColorFilter alloc] initWithType:KWColorTypeBlueberrt],
-                               [[KWColorFilter alloc] initWithType:KWColorTypeDreamy],
-                               [[KWColorFilter alloc] initWithType:KWColorTypeHabana],
-                               [[KWColorFilter alloc] initWithType:KWColorTypeHappy],
-                               [[KWColorFilter alloc] initWithType:KWColorTypeHarvest],
-                               [[KWColorFilter alloc] initWithType:KWColorTypeMisty],
-                               [[KWColorFilter alloc] initWithType:KWColorTypeSpring]
-                               ];
+//        self.lookupFilters = @[
+//                               [[KWColorFilter alloc] initWithType:KWColorTypeBlueberrt],
+//                               [[KWColorFilter alloc] initWithType:KWColorTypeDreamy],
+//                               [[KWColorFilter alloc] initWithType:KWColorTypeHabana],
+//                               [[KWColorFilter alloc] initWithType:KWColorTypeHappy],
+//                               [[KWColorFilter alloc] initWithType:KWColorTypeHarvest],
+//                               [[KWColorFilter alloc] initWithType:KWColorTypeMisty],
+//                               [[KWColorFilter alloc] initWithType:KWColorTypeSpring]
+//                               ];
         
         self.distortionTitleInfosArr = [NSMutableArray arrayWithObjects:@"cancel",@"distortion_SquareFace.png",@"distortion_ET.png",@"distortion_FatFace",@"distortion_SmallFace",@"distortion_PearFace",nil];
         
-        self.globalBeatifyFilterTitleInfosArr = [NSMutableArray arrayWithObjects:@"artwork master",@"BLUEBERRY_icon.png", @"DREAMY_icon.png",@"HABANA_icon.png",@"HAPPY_icon.png",@"HARVEST_icon.png",@"MISTY_icon.png",@"SPRING_icon.png", nil];
-        
-        if (IsEnglish) {
-            self.textArr = [NSMutableArray arrayWithObjects:@"Origin",@"BLUE",@"DREAMY",@"HABANA",@"HAPPY",@"HARVEST",@"MISTY",@"SPRING", nil];
-        }
-        else
-        {
-            self.textArr = [NSMutableArray arrayWithObjects:@"原图",@"BLUE",@"DREAMY",@"HABANA",@"HAPPY",@"HARVEST",@"MISTY",@"SPRING", nil];
-        }
+//        self.globalBeatifyFilterTitleInfosArr = [NSMutableArray arrayWithObjects:@"artwork master",@"BLUEBERRY_icon.png", @"DREAMY_icon.png",@"HABANA_icon.png",@"HAPPY_icon.png",@"HARVEST_icon.png",@"MISTY_icon.png",@"SPRING_icon.png", nil];
+//        
+//        if (IsEnglish) {
+//            self.textArr = [NSMutableArray arrayWithObjects:@"Origin",@"BLUE",@"DREAMY",@"HABANA",@"HAPPY",@"HARVEST",@"MISTY",@"SPRING", nil];
+//        }
+//        else
+//        {
+//            self.textArr = [NSMutableArray arrayWithObjects:@"原图",@"BLUE",@"DREAMY",@"HABANA",@"HAPPY",@"HARVEST",@"MISTY",@"SPRING", nil];
+//        }
         
         self.varWidth = ScreenWidth_KW;
         self.varHeight = ScreenHeight_KW;
         
         
         [self resetDistortionParams];
-//        [self toggleCamera];
+     
+        //添加表情贴纸参数设置
+        self.renderer.kwRenderBlock = ^(unsigned char *pixels, int format, int width, int height,result_68_t *p_result, int rstNum, int orientation,int faceNum){
+            
+            BOOL mouth_open = NO;
+            
+            for (int i = 0; i < rstNum; i++) {
+                mouth_open = p_result[i].mouth_open;
+                if (mouth_open) {
+                    break;
+                }
+            }
+            
+            if (mouth_open && ![__weakSelf.renderer checkSmiliesSticker:(GPUImageFilter *)__weakSelf.filters[3]] && __weakSelf.renderer.isEnableSmiliesSticker) {
+                [((KWSmiliesStickerRenderer *)__weakSelf.filters[3]).sticker setPlayCount:1];
+                ((KWSmiliesStickerRenderer *)__weakSelf.filters[3]).isAutomaticallyPlay = YES;
+                [((KWSmiliesStickerRenderer *)__weakSelf.filters[3]) setSticker:__weakSelf.presentStickers[0]];
+                
+                KWSticker *lastSticker = __weakSelf.presentStickers[0];
+                //设置播放次数
+                [lastSticker setPlayCount:1];
+                //贴纸帧数置零 将贴纸重新播放
+                for (KWStickerItem *item in lastSticker.items) {
+                    item.currentFrameIndex = 0;
+                    item.accumulator = 0;
+                }
+                //礼物贴纸 默认设置为跟脸 渲染
+                ((KWSmiliesStickerRenderer *)__weakSelf.filters[3]).needTrackData = YES;
+                
+                [__weakSelf.renderer addFilter:__weakSelf.filters[3]];
+                
+            }
+        };
+        
+        //        [self toggleCamera];
     }
 }
 
 - (void)resetDistortionParams
 {
     if ([[Global sharedManager] isPixcelBufferRotateVertical]) {
-        ((SmallFaceBigEyeFilter *)self.beautifyFilters[0]).y_scale = self.varHeight / self.varWidth  ;
+        ((SmallFaceBigEyeFilter *)self.beautifyFilters[0]).y_scale = self.varHeight / self.varWidth;
         //    ((NewBeautyFilter *)self.beautifyNewFilters[1])
         ((ETDistortionFilter *) self.distortionFilters[1]).y_scale = self.varHeight / self.varWidth;
         ((FatFaceDistortionFilter *) self.distortionFilters[2]).y_scale =  self.varHeight / self.varWidth;
@@ -198,22 +276,9 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
 {
     [self onEnableBeauty:YES];
     
-    [self onFilterChanged:0];
+   
     
 }
-
-///* 点阵 按钮 */
-//- (UIButton *)pointBtn
-//{
-//    if (!_pointBtn) {
-//        _pointBtn = [[UIButton alloc]initWithFrame:CGRectMake((ScreenWidth_KW - 46 * 4) / 5 * 4 + 46 * 3, 6, 46, 46)];
-//        [_pointBtn setImage:[UIImage imageNamed:@"face drk"] forState:UIControlStateNormal];
-//        [_pointBtn setImage:[UIImage imageNamed:@"face"] forState:UIControlStateSelected];
-//        [_pointBtn setHidden:YES];
-//        [_pointBtn addTarget:self action:@selector(pointBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
-//    }
-//    return _pointBtn;
-//}
 
 /******
  * 清空所有特效
@@ -298,6 +363,9 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
     }
 }
 
+
+
+
 /* 贴纸选择
  * stickerIndex: 贴纸索引
  */
@@ -307,20 +375,102 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
     
     [self.renderer removeFilter:self.filters[1]];
     
+    
+    if (self.currentStickerIndex >= 0) {
+        
+        KWSticker *lastSticker = self.stickers[self.currentStickerIndex];
+        
+        //设置播放次数
+        //        [lastSticker setPlayCount:1];
+        
+        //贴纸帧数置零 将贴纸重新播放
+        for (KWStickerItem *item in lastSticker.items) {
+            
+            item.currentFrameIndex = 0;
+        }
+    }
+    
     if (self.currentStickerIndex >= 0 && self.currentStickerIndex < self.stickers.count + 1) {
+        
         [(KWStickerRenderer *)self.filters[1] setSticker:self.stickers[self.currentStickerIndex]];
+        
         [self.renderer addFilter:self.filters[1]];
-//        if (self.movieWriter) {
-//            [self.filters[1] addTarget:self.movieWriter];
-//        }
+        
     } else {
+        
         [(KWStickerRenderer *)self.filters[1] setSticker:nil];
-//        if (self.movieWriter) {
-//            [self.filters[1] removeTarget:self.movieWriter];
-//        }
+        
     }
 }
 
+/* 礼物贴纸选择
+ * stickerIndex: 贴纸索引
+ */
+- (void)onPresentStickerChanged:(NSInteger) pos
+{
+    
+    self.currentPresentStickerIndex = pos;
+    
+    [self.renderer removeFilter:self.filters[2]];
+    
+    
+    if (self.currentPresentStickerIndex >= 0) {
+        KWSticker *lastSticker = self.presentStickers[self.currentPresentStickerIndex];
+        //设置播放次数
+        [lastSticker setPlayCount:1];
+        //贴纸帧数置零 将贴纸重新播放
+        for (KWStickerItem *item in lastSticker.items) {
+            item.currentFrameIndex = 0;
+            item.accumulator = 0;
+        }
+    }
+    
+    //设置播放结束后的自定义动作
+    __weak typeof (self) __weakSelf = self;
+    //礼物贴纸 默认设置为跟脸 渲染
+    ((KWPresentStickerRenderer *)self.filters[2]).needTrackData = YES;
+    ((KWPresentStickerRenderer *)self.filters[2]).presentStickerRendererPlayOverBlock = ^()
+    {
+        [((KWPresentStickerRenderer *)__weakSelf.filters[2]).sticker setPlayCount:0];
+        //移除相应filter
+        [__weakSelf.renderer removeFilter:__weakSelf.filters[2]];
+        
+    };
+    
+    if (self.currentPresentStickerIndex >= 0 && self.currentPresentStickerIndex < self.presentStickers.count + 1)
+    {
+        [(KWPresentStickerRenderer *)self.filters[2] setSticker:self.presentStickers[self.currentPresentStickerIndex]];
+        
+        [self.renderer addFilter:self.filters[2]];
+    }
+    else {
+        [(KWPresentStickerRenderer *)self.filters[2] setSticker:nil];
+    }
+}
+
+
+/* 是否开启表情贴纸触发
+ * support：YES（开启） NO(关闭)
+ */
+- (void)onEnableSmiliesSticker:(BOOL) support
+{
+    if (support) {
+        //暂时使用礼物贴纸 展示表情贴纸
+        __weak typeof(self) __weakSelf = self;
+        
+        ((KWSmiliesStickerRenderer *)self.filters[3]).smiliesStickerRendererPlayOverBlock = ^(){
+            [__weakSelf.renderer removeFilter:__weakSelf.filters[3]];
+        };
+        self.renderer.isEnableSmiliesSticker = YES;
+    }
+    else
+    {
+        [((KWSmiliesStickerRenderer *)self.filters[3]) setSticker:nil];
+        [self.renderer removeFilter:self.filters[3]];
+        
+        self.renderer.isEnableSmiliesSticker = NO;
+    }
+}
 
 /*
  * 调节美颜参数
@@ -368,18 +518,18 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
 {
     [sharedAccountManagerInstance.renderer removeAllFilters];
     [((KWStickerRenderer *)self.filters[1]) setSticker:nil];
-    self.filters = nil;
-    self.distortionFilters = nil;
-    self.beautifyFilters = nil;
-    self.lookupFilters = nil;
-    self.beautifyNewFilters = nil;
-    self.stickers = nil;
-    self.distortionTitleInfosArr = nil;
-    self.globalBeatifyFilterTitleInfosArr = nil;
-    self.textArr = nil;
-    self.renderer = nil;
-    sharedAccountManagerInstance = nil;
+    [((KWPresentStickerRenderer *)self.filters[2]) setSticker:nil];
+    [((KWSmiliesStickerRenderer *)self.filters[3]) setSticker:nil];
+    sharedAccountManagerInstance.filters = nil;
+    sharedAccountManagerInstance.distortionFilters = nil;
+    sharedAccountManagerInstance.beautifyFilters = nil;
+    sharedAccountManagerInstance.lookupFilters = nil;
+    sharedAccountManagerInstance.beautifyNewFilters = nil;
+    sharedAccountManagerInstance.stickers = nil;
+    sharedAccountManagerInstance.presentStickers = nil;
+    sharedAccountManagerInstance.distortionTitleInfosArr = nil;
     sharedAccountManagerInstance.renderer = nil;
+    sharedAccountManagerInstance = nil;
 }
 
 

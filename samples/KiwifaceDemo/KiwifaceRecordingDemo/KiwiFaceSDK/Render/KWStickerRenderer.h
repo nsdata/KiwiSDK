@@ -1,6 +1,6 @@
 //
 //  KWStickerRenderer.h
-//  PLMediaStreamingKitDemo
+//  KiwiFaceKitDemo
 //
 //  Created by ChenHao on 2016/11/14.
 //  Copyright © 2016年 0dayZh. All rights reserved.
@@ -15,6 +15,10 @@
  Sticker rendering classes
  */
 @interface KWStickerRenderer : GPUImageFilter <KWRenderProtocol, GPUImageInput>
+
+typedef void(^StickerRendererPlayOverBlock)(void);
+
+@property (nonatomic, copy) StickerRendererPlayOverBlock stickerRendererPlayOverBlock;
 
 /**
 Need to draw the stickers

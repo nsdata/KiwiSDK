@@ -76,6 +76,8 @@
         dic[@"category"] = [itemDict valueForKey:@"category"];
         dic[@"thumb"] = [itemDict valueForKey:@"thumb"];
         dic[@"voiced"] = [itemDict valueForKey:@"voiced"];
+        dic[@"sourceType"] = [itemDict valueForKey:@"sourceType"];
+
         
         if ([[NSFileManager defaultManager] fileExistsAtPath:[_stickerPath stringByAppendingPathComponent:[itemDict valueForKey:@"dir"]]]) {
             
@@ -96,6 +98,49 @@
     [newDict writeToFile:[_stickerPath stringByAppendingPathComponent:@"stickers.json"] atomically:NO];
     
     
+}
+
+
+//Update the download information for all stickers
+- (NSMutableDictionary *)updateConfigJSONForDic
+{
+    
+    NSDictionary *oldDict = [NSDictionary dictionaryWithContentsOfFile:[_stickerPath stringByAppendingPathComponent:@"stickers.json"]];
+    
+    NSMutableDictionary *newDict = [[NSMutableDictionary alloc]init];
+    NSMutableArray * newArr = [[NSMutableArray alloc]init];
+    NSArray *oldArr = [oldDict objectForKey:@"stickers"];
+    for (NSDictionary *itemDict in oldArr) {
+        
+        NSMutableDictionary *dic = [[NSMutableDictionary alloc]init];
+        
+        dic[@"name"] = [itemDict valueForKey:@"name"];
+        dic[@"dir"] = [itemDict valueForKey:@"dir"];
+        dic[@"category"] = [itemDict valueForKey:@"category"];
+        dic[@"thumb"] = [itemDict valueForKey:@"thumb"];
+        dic[@"voiced"] = [itemDict valueForKey:@"voiced"];
+        dic[@"sourceType"] = [itemDict valueForKey:@"sourceType"];
+        
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[_stickerPath stringByAppendingPathComponent:[itemDict valueForKey:@"dir"]]]) {
+            
+            dic[@"downloaded"] = [NSNumber numberWithBool:YES];
+        }else{
+            
+            dic[@"downloaded"] = [NSNumber numberWithBool:NO];
+            
+        }
+        
+        [newArr addObject:dic];
+        
+        
+    }
+    
+    newDict[@"stickers"] = newArr;
+    
+    [newDict writeToFile:[_stickerPath stringByAppendingPathComponent:@"stickers.json"] atomically:NO];
+    
+    return newDict;
 }
 
 
@@ -120,7 +165,12 @@
     }
     
     //Copy the config file in the resource directory to the stickers folder in the document directory
-    [oldDict writeToFile:[_stickerPath stringByAppendingPathComponent:@"stickers.json"] atomically:NO];
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:[_stickerPath stringByAppendingPathComponent:@"stickers.json"] isDirectory:NULL]) {
+        [oldDict writeToFile:[_stickerPath stringByAppendingPathComponent:@"stickers.json"] atomically:NO];
+    }
+    
+   
     
     
     //拷贝本地贴纸到沙盒
@@ -129,11 +179,19 @@
     NSArray *dirArr = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:localPath error:NULL];
     for (NSString *stickerName in dirArr) {
         
-        if (![[NSFileManager defaultManager] fileExistsAtPath:[_stickerPath stringByAppendingPathComponent:stickerName]]) {
-
-            [[NSFileManager defaultManager] copyItemAtPath:[localPath stringByAppendingPathComponent:stickerName] toPath:[_stickerPath stringByAppendingPathComponent:stickerName] error:NULL];
-            
+        if (self.isLoadStickersFromServer) {
+            if (![[NSFileManager defaultManager] fileExistsAtPath:[_stickerPath stringByAppendingPathComponent:stickerName]] ) {
+                
+                [[NSFileManager defaultManager] copyItemAtPath:[localPath stringByAppendingPathComponent:stickerName] toPath:[_stickerPath stringByAppendingPathComponent:stickerName] error:NULL];
+                
+            }
         }
+        else
+        {
+            [[NSFileManager defaultManager] copyItemAtPath:[localPath stringByAppendingPathComponent:stickerName] toPath:[_stickerPath stringByAppendingPathComponent:stickerName] error:NULL];
+        }
+        
+        
     }
     
      //Update the sticker download information first
@@ -156,15 +214,15 @@
     }
     [stickerNames addObject:@"stickers.json"];
     
-    NSArray *existsFile = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_stickerPath error:NULL];
+//    NSArray *existsFile = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_stickerPath error:NULL];
 
-    for (NSString *stickerName in existsFile) {
-        if (![stickerNames containsObject:stickerName]) {
-            NSLog(@"delete:%@",stickerName);
-            [[NSFileManager defaultManager] removeItemAtPath:[_stickerPath stringByAppendingPathComponent:stickerName] error:NULL];
-        }
-    }
-    
+//    for (NSString *stickerName in existsFile) {
+//        if (![stickerNames containsObject:stickerName]) {
+//            NSLog(@"delete:%@",stickerName);
+//            [[NSFileManager defaultManager] removeItemAtPath:[_stickerPath stringByAppendingPathComponent:stickerName] error:NULL];
+//        }
+//    }
+//    
     
     //遍历json返回sticker数组
     for (NSDictionary *itemDict in newArr) {
@@ -173,6 +231,11 @@
         NSURL *url = [NSURL fileURLWithPath:dir];
         
         KWSticker *sticker = [[KWSticker alloc]initWithName:[itemDict valueForKey:@"name"] thumbName:[itemDict valueForKey:@"thumb"] download:[[itemDict valueForKey:@"downloaded"] boolValue] DirectoryURL:url];
+        if ([[itemDict valueForKey:@"sourceType"] intValue] == 0) {
+            sticker.sourceType = KWStickerSourceTypeFromKiwi;
+        }else{
+            sticker.sourceType = KWStickerSourceTypeFromLocal; 
+        }
         
         if (sticker) {
             [stickers_json addObject:sticker];
@@ -181,6 +244,25 @@
     
     isLoadSuccess = YES;
     return isLoadSuccess;
+}
+
+/**
+ Update the local stickers from the server
+ */
+- (void)updateStickersJSONWithCompletion:(void(^)(BOOL isSuccess,NSMutableDictionary* dic))completion serverJson:(NSArray *)serverJson
+{
+    BOOL isSuccess = NO;
+   
+    
+    NSMutableDictionary *newDict = [[NSMutableDictionary alloc]init];
+    
+    [newDict setObject:serverJson forKey:@"stickers"];
+    
+    isSuccess = [newDict writeToFile:[_stickerPath stringByAppendingPathComponent:@"stickers.json"] atomically:YES];
+    
+    newDict = [self updateConfigJSONForDic];
+    
+    completion(isSuccess,newDict);
 }
 
 

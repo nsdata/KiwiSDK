@@ -1,6 +1,6 @@
 //
 //  KWRenderer.h
-//  PLMediaStreamingKitDemo
+//  KiwiFaceKitDemo
 //
 //  Created by ChenHao on 2016/11/29.
 //  Copyright © 2016年 0dayZh. All rights reserved.
@@ -45,18 +45,30 @@ typedef void (^RenderAndGetFacePointsBlock)(unsigned char *pixels, int format, i
 //Forces face capture to stop
 @property (nonatomic, assign) BOOL isStopTracker;
 
+//Whether low frequency Tracker
+@property (nonatomic, assign) BOOL isLowFrequencyTracker;
+
+//Whether to open the face stickers
+@property (nonatomic, assign) BOOL isEnableSmiliesSticker;
+
 @property (nonatomic, copy)RenderAndGetFacePointsBlock kwRenderBlock;
 
 
 - (void)addFilter:(GPUImageOutput<GPUImageInput, KWRenderProtocol> *)filter;
+
 - (void)removeFilter:(GPUImageOutput<GPUImageInput, KWRenderProtocol> *)filter;
 
 - (void)removeAllFilters;
 
+//获取目前正在使用的滤镜数量
 - (NSInteger)getAllUsingFiltersCount;
 
 - (void)processPixelBuffer:(CVPixelBufferRef)pixelBuffer withRotation:(cv_rotate_type)rotation mirrored:(BOOL)isMirrored;
 
+//检查tracker是否初始化失败
 + (BOOL)isSdkInitFailed;
+
+//检查表情贴纸是否正在播放
+- (BOOL)checkSmiliesSticker:(GPUImageFilter *)filter;
 
 @end

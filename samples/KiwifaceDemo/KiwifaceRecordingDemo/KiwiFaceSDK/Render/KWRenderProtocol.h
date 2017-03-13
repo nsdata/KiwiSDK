@@ -1,6 +1,6 @@
 //
 //  FTRenderProtocol.h
-//  PLMediaStreamingKitDemo
+//  KiwiFaceKitDemo
 //
 //  Created by ChenHao on 2016/11/26.
 //  Copyright © 2016年 0dayZh. All rights reserved.
@@ -23,5 +23,7 @@
  Face key points (possibly more than one face)
  */
 @property (nonatomic, copy) NSArray<NSArray *> *faces;
+
+@property (nonatomic, copy) NSMutableArray *smiliesInfos;
 
 @end

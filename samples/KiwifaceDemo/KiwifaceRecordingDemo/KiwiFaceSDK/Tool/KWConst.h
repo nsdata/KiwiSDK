@@ -22,20 +22,20 @@
 
 //判断是否 Retina屏、设备是否%fhone 5、是否是iPad
 #define isRetina ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 960), [[UIScreen mainScreen] currentMode].size) : NO)
-#define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
+#define isIPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
 #define isPad (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 
 //判断设备的操做系统是不是ios7
 #define IOS7 ([[[UIDevice currentDevice].systemVersion doubleValue] >= 7.0]
 
-//判断当前设备是不是iphone5
-#define kScreenIphone5    (([[UIScreen mainScreen] bounds].size.height)>=568)
+//判断当前设备是不是iphone5或以下设备
+#define kScreenIphone5    (([[UIScreen mainScreen] bounds].size.height)<=568)
 
 //获取当前屏幕的高度
 #define ScreenHeight_KW ([[UIScreen mainScreen] bounds].size.height)
 
 //获取当前屏幕的宽度
-#define ScreenWidth_KW  ([UIScreen mainScreen].applicationFrame.size.width)
+#define ScreenWidth_KW  ([[UIScreen mainScreen] bounds].size.width)
 
 
 
@@ -65,3 +65,5 @@
 #endif /* const_h */
 
 #define IsEnglish 1
+
+#define StickerIconPath @"http://oimad4qgn.bkt.clouddn.com/thumb/"

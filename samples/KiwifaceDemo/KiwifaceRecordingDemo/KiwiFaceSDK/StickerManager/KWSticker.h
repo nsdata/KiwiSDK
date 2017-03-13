@@ -27,11 +27,23 @@ typedef NS_ENUM(NSInteger,KWStickerDownloadState){
     KWStickerDownloadStateDownoading,//downloading
 };
 
+typedef NS_ENUM(NSInteger,KWStickerSourceType){
+    KWStickerSourceTypeFromKiwi,//0  Kiwi's downloadURL
+    KWStickerSourceTypeFromLocal,//1 your own downloadURL
+};
+
 /**
 A set of stickers, all the information of a component (such as a nose).
  */
 @interface KWStickerItem : NSObject
 
+typedef void(^StickerItemPlayOver)(void);
+
+@property (nonatomic, copy) StickerItemPlayOver stickerItemPlayOver;
+
+@property (nonatomic,assign)BOOL isLastItem;
+
+@property (nonatomic) NSTimeInterval accumulator;
 
 /**
 The type of location to display
@@ -150,6 +162,9 @@ Similar to the -nextImageForInterval: method, but get a texture for OpenGL use
  */
 @interface KWSticker : NSObject
 
+typedef void(^StickerPlayOver)(void);
+
+@property (nonatomic, copy) StickerPlayOver stickerPlayOver;
 
 /**
 Contains all components of a sticker resource
@@ -183,11 +198,25 @@ Stickers are downloaded
  */
 @property (nonatomic, assign) BOOL isDownload;
 
+@property (nonatomic, assign) NSUInteger playStickerCount;
+
 
 /**
  The download status of the sticker
  */
 @property (nonatomic,assign)KWStickerDownloadState downloadState;
+
+
+/**
+ The download source type of the sticker
+ */
+@property (nonatomic,assign)KWStickerSourceType sourceType;
+
+/**
+ The download URL of the sticker
+ */
+@property (nonatomic,strong)NSURL *downloadURL;
+
 
 
 
@@ -212,5 +241,7 @@ Stickers are downloaded
  @param failed update failed callback
  */
 + (void)updateStickerAfterDownload:(KWSticker *)sticker DirectoryURL:(NSURL *)dirurl sucess:(void(^)(KWSticker *))sucessed fail:(void(^)(KWSticker *))failed;
+
+- (void)setPlayCount:(NSUInteger)count;
 
 @end

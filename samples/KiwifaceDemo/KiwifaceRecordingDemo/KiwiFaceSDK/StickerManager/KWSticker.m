@@ -18,7 +18,7 @@
 /**
 counter
  */
-@property (nonatomic) NSTimeInterval accumulator;
+
 @property (nonatomic) NSTimeInterval interval;
 
 @end
@@ -54,7 +54,7 @@ counter
         
         self.accumulator = 0.;
         self.currentFrameIndex = 0;
-        self.loopCountdown = NSUIntegerMax;
+        self.loopCountdown = NSIntegerMax;
         //        selfalloc.interval = self.duration / self.count;
     }
     
@@ -77,16 +77,25 @@ counter
     return [self _imageAtIndex:self.currentFrameIndex];
 }
 
-
 - (NSUInteger)_nextFrameIndexForInterval:(NSTimeInterval)interval
 {
-    // This is where FLAnimatedImage loads the GIF
-    if (self.loopCountdown == 0) {
-        return self.currentFrameIndex;
-    }
     
+    
+    // This is where FLAnimatedImage loads the GIF
+
     NSUInteger nextFrameIndex = self.currentFrameIndex;
     self.accumulator += interval;
+    
+//    if (self.isLastItem && self.loopCountdown == 0) {
+//        
+//        if (interval > (self.count -1) * self.duration) {
+//            if (self.stickerItemPlayOver) {
+//                self.stickerItemPlayOver();
+//            }
+//        }
+//        //                    NSLog(@"self.isLastItem:%d",self.isLastItem);
+//    }
+    
     
     while (self.accumulator > self.duration) {
         self.accumulator -= self.duration;
@@ -96,7 +105,12 @@ counter
             self.loopCountdown--;
             
             if (self.loopCountdown == 0) {
+                if (self.isLastItem && self.stickerItemPlayOver) {
+                        self.stickerItemPlayOver();
+                }
                 nextFrameIndex = self.count - 1;
+//                self.accumulator = 0;
+//                nextFrameIndex = 0;
                 break;
             } else {
                 nextFrameIndex = 0;
@@ -225,6 +239,10 @@ counter
 - (instancetype)initWithName:(NSString *)name thumbName:(NSString *)thumb download:(BOOL)download DirectoryURL:(NSURL *)dirurl
 {
     if (self = [super init]) {
+        if (self.playStickerCount == 0) {
+            self.playStickerCount = NSIntegerMax;
+        }
+        
         _stickerName = name;
         _stickerIcon = thumb;
         _isDownload = download;
@@ -257,10 +275,18 @@ counter
             NSArray *itemsDict = [dict objectForKey:@"itemList"];
             NSMutableArray *items = [NSMutableArray arrayWithCapacity:itemsDict.count];
             
+            NSInteger itemsFrameNum = 0;
+            KWStickerItem *itemCopy;
             for (NSDictionary *itemDict in itemsDict) {
                 KWStickerItem *item = [[KWStickerItem alloc] initWithJSONDictionary:itemDict];
-                item.itemDir = [_stickerDir stringByAppendingPathComponent:item.itemDir];
                 
+                
+                if (item.count >= itemsFrameNum) {
+                    itemsFrameNum = item.count;
+                    itemCopy = item;
+                }
+                item.itemDir = [_stickerDir stringByAppendingPathComponent:item.itemDir];
+                item.loopCountdown = self.playStickerCount;
                 NSArray *dirArr = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:item.itemDir error:NULL];
                 NSInteger fileCount = dirArr.count;
                 
@@ -279,6 +305,7 @@ counter
                 
                 [items addObject:item];
             }
+            itemCopy.isLastItem = YES;
             
             _items = items;
             
@@ -287,8 +314,26 @@ counter
     return self;
 }
 
+-(void)setSourceType:(KWStickerSourceType)sourceType
+{
+    _sourceType = sourceType;
+    if (sourceType == KWStickerSourceTypeFromKiwi) {
+        // if you want to use Kiwi's downloadURL, you donot need to do anything
+        _downloadURL = nil;
+    }else if(sourceType == KWStickerSourceTypeFromLocal){
+        
+        // you can set your own downURL here
+        _downloadURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://在这拼接下载的URL%@.zip",_stickerName]];
+    }
+    
+}
+
 + (void)updateStickerAfterDownload:(KWSticker *)sticker DirectoryURL:(NSURL *)dirurl sucess:(void(^)(KWSticker *))sucessed fail:(void(^)(KWSticker *))failed
 {
+    if (sticker.playStickerCount == 0) {
+        sticker.playStickerCount = NSIntegerMax;
+    }
+    
     sticker.isDownload = YES;
     NSString *dir = dirurl.path;
     sticker.stickerDir = dir;
@@ -312,10 +357,16 @@ counter
     NSArray *itemsDict = [dict objectForKey:@"itemList"];
     NSMutableArray *items = [NSMutableArray arrayWithCapacity:itemsDict.count];
     
+    NSInteger itemsFrameNum = 0;
+    KWStickerItem *itemCopy;
     for (NSDictionary *itemDict in itemsDict) {
         KWStickerItem *item = [[KWStickerItem alloc] initWithJSONDictionary:itemDict];
+        if (item.count >= itemsFrameNum) {
+            itemsFrameNum = item.count;
+            itemCopy = item;
+        }
         item.itemDir = [sticker.stickerDir stringByAppendingPathComponent:item.itemDir];
-        
+        item.loopCountdown = sticker.playStickerCount;
         NSArray *dirArr = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:item.itemDir error:NULL];
         NSInteger fileCount = dirArr.count;
         
@@ -337,10 +388,22 @@ counter
         
         [items addObject:item];
     }
-    
+    itemCopy.isLastItem = YES;
     sticker.items = items;
     
     sucessed(sticker);
+}
+
+- (void)setPlayCount:(NSUInteger)count
+{
+    self.playStickerCount = count;
+    for (KWStickerItem *item in _items) {
+        item.loopCountdown = count;
+        if (count == 0) {
+            item.accumulator = 0;
+            item.currentFrameIndex = 0;
+        }
+    }
 }
 
 + (void)resetSticker:(KWSticker *)sticker

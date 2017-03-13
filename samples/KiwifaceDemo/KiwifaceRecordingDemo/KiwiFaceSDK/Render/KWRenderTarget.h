@@ -1,6 +1,6 @@
 //
 //  FTRenderTarget.h
-//  PLMediaStreamingKitDemo
+//  KiwiFaceKitDemo
 //
 //  Created by ChenHao on 2016/11/29.
 //  Copyright © 2016年 0dayZh. All rights reserved.
@@ -22,5 +22,7 @@
 @property (nonatomic) BOOL enabled;
 
 @property (nonatomic, unsafe_unretained) CVPixelBufferRef renderTarget;
+
+- (void)releaseManager;
 
 @end
