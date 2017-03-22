@@ -15,10 +15,10 @@
 		168835281E45BE300016210E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 168835261E45BE300016210E /* LaunchScreen.storyboard */; };
 		168835341E45C4070016210E /* KWVideoShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 168835331E45C4070016210E /* KWVideoShowViewController.m */; };
 		16883DB01E45C9FC0016210E /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16883DAF1E45C9FC0016210E /* AssetsLibrary.framework */; };
-		16883DB21E45CA0C0016210E /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 16883DB11E45CA0C0016210E /* libz.tbd */; };
 		16883DB41E45CA3D0016210E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16883DB31E45CA3D0016210E /* AVFoundation.framework */; };
 		16883DB91E45CAA70016210E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16883DB81E45CAA70016210E /* Foundation.framework */; };
 		16E0B50D1E4862E8000D9A91 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 16E0B50C1E4862E8000D9A91 /* Default-568h@2x.png */; };
+		BE4809C11E7BE03900FAFDF7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 16883DB11E45CA0C0016210E /* libz.tbd */; };
 		BE576B2D1E76B8160091FDB5 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE576B2C1E76B8160091FDB5 /* opencv2.framework */; };
 		BEB84C5D1E76B57A00C2CBC6 /* filters.json in Resources */ = {isa = PBXBuildFile; fileRef = BEB8476F1E76B57800C2CBC6 /* filters.json */; };
 		BEB84C5F1E76B57A00C2CBC6 /* libGPUImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEB8481B1E76B57900C2CBC6 /* libGPUImage.a */; };
@@ -812,13 +812,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE4809C11E7BE03900FAFDF7 /* libz.tbd in Frameworks */,
 				BEB84C601E76B57A00C2CBC6 /* libGPUImage_release.a in Frameworks */,
 				16883DB91E45CAA70016210E /* Foundation.framework in Frameworks */,
 				BEB84C631E76B57A00C2CBC6 /* libKiwiFaceSDK.a in Frameworks */,
 				BE576B2D1E76B8160091FDB5 /* opencv2.framework in Frameworks */,
 				BEB84F131E76B57B00C2CBC6 /* libfaceTrackerSDK.a in Frameworks */,
 				16883DB41E45CA3D0016210E /* AVFoundation.framework in Frameworks */,
-				16883DB21E45CA0C0016210E /* libz.tbd in Frameworks */,
 				BEB84C5F1E76B57A00C2CBC6 /* libGPUImage.a in Frameworks */,
 				16883DB01E45C9FC0016210E /* AssetsLibrary.framework in Frameworks */,
 			);

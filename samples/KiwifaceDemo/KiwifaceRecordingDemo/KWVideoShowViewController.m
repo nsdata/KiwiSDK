@@ -107,8 +107,11 @@
             [__weakSelf.kwSdkUI popAllView];
             
             
-            __weakSelf.kwSdkUI.kwSdk.renderer = nil;
-            __weakSelf.kwSdkUI.kwSdk = nil;
+//            __weakSelf.kwSdkUI.kwSdk.renderer = nil;
+//            __weakSelf.kwSdkUI.kwSdk = nil;
+            [KiwiFaceSDK releaseManager];
+            [KiwiFaceSDK_UI releaseManager];
+            
         }];
     };
     //拍照
