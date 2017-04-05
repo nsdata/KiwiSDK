@@ -1,6 +1,6 @@
 //
 //  KWStickerDownloadManager.h
-//  PLMediaStreamingKitDemo
+//  KiwiFaceKitDemo
 //
 //  Created by jacoy on 17/1/20.
 //  Copyright © 2017年 0dayZh. All rights reserved.

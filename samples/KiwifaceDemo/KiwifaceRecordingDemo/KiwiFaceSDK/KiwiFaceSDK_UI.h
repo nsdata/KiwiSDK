@@ -18,6 +18,11 @@
 typedef void(^ToggleBtnTapBlock)(void);
 
 /**
+ Taking photos of the button
+ */
+typedef void(^TakePhotoBtnTapBlock)(UIButton *sender);
+
+/**
  the block can witch the close videowindow button
  */
 typedef void(^CloseVideoWindowBtnTapBlock)(void);
@@ -44,7 +49,7 @@ typedef void(^UpdateLogBlock)(NSString *log);
 /**
  When you use the SDK built-in UI, you must pass in a ViewController that references the page
  */
-@property (nonatomic, weak) UIViewController *ActionViewController;
+@property (nonatomic, weak) UIViewController *actionViewController;
 
 /**
  Whether to clear the original page controller UI
@@ -56,6 +61,8 @@ typedef void(^UpdateLogBlock)(NSString *log);
 @property (nonatomic,copy) ToggleBtnTapBlock toggleBtnBlock;
 
 @property (nonatomic,copy) CloseVideoWindowBtnTapBlock closeVideoBtnBlock;
+
+@property (nonatomic,copy) TakePhotoBtnTapBlock takePhotoBtnTapBlock;
 
 /**
  Video preview layer
@@ -80,6 +87,10 @@ typedef void(^UpdateLogBlock)(NSString *log);
  Creates built-in UI
  */
 - (void)initSDKUI;
+
++ (void)releaseManager;
+
+- (void)setCloseBtnEnable:(BOOL) enable;
 
 /**
  Sets whether or not to hide the middle main action button below the home screen's built-in UI

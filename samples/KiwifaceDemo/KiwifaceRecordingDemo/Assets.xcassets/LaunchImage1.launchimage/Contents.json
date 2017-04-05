@@ -3,7 +3,7 @@
     {
       "orientation" : "portrait",
       "idiom" : "iphone",
-      "filename" : "640*960-1.png",
+      "filename" : "640X960新.png",
       "extent" : "full-screen",
       "minimum-system-version" : "7.0",
       "scale" : "2x"
@@ -20,7 +20,7 @@
     {
       "orientation" : "portrait",
       "idiom" : "ipad",
-      "filename" : "768X1024-1.png",
+      "filename" : "750X1334新.png",
       "extent" : "full-screen",
       "minimum-system-version" : "7.0",
       "scale" : "1x"
@@ -35,7 +35,7 @@
     {
       "orientation" : "portrait",
       "idiom" : "ipad",
-      "filename" : "1536*2048-1.png",
+      "filename" : "1242X2208新.png",
       "extent" : "full-screen",
       "minimum-system-version" : "7.0",
       "scale" : "2x"

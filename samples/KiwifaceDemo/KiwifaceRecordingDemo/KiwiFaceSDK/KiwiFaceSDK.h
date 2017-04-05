@@ -45,18 +45,28 @@ New beauty filter collection Milled skin whitening powder
  */
 @property (nonatomic, strong) NSMutableArray<KWSticker *> *stickers;
 
+/**
+ present stickers collection
+ */
+@property (nonatomic, strong) NSMutableArray<KWSticker *> *presentStickers;
+
 /* distorting mirror filter collection */
 @property (nonatomic, strong) NSArray<GPUImageOutput<GPUImageInput, KWRenderProtocol> *> *distortionFilters;
 
 /**
  The global filter collection
  */
-@property (nonatomic, strong) NSArray<GPUImageLookupFilter *> *lookupFilters;
+@property (nonatomic, strong) NSArray<KWColorFilter *> *lookupFilters;
 
 /**
  The currently selected sticker item
  */
 @property (nonatomic) NSInteger currentStickerIndex;
+
+/**
+ The currently selected present sticker item
+ */
+@property (nonatomic) NSInteger currentPresentStickerIndex;
 
 /**
  The currently selected global filter item
@@ -97,16 +107,6 @@ New beauty filter collection Milled skin whitening powder
  Distorting mirror filters array
  */
 @property (nonatomic, strong) NSMutableArray *distortionTitleInfosArr;
-
-/**
- Global beauty icons of filters array
- */
-@property (nonatomic, strong) NSMutableArray *globalBeatifyFilterTitleInfosArr;
-
-/**
-  Global beauty title of filters array
- */
-@property (nonatomic, strong) NSMutableArray *textArr;
 
 @property (nonatomic, assign) BOOL cameraPositionBack;
 
@@ -149,6 +149,11 @@ New beauty filter collection Milled skin whitening powder
  */
 - (void)onStickerChanged:(NSInteger) pos;
 
+/* 礼物贴纸选择
+ * stickerIndex: 贴纸索引
+ */
+- (void)onPresentStickerChanged:(NSInteger) pos;
+
 /**
  Switching distorting mirror filters
 
@@ -189,6 +194,11 @@ New beauty filter collection Milled skin whitening powder
  @param support The value is YES:open or NO:close
  */
 - (void)onEnableDrawPoints:(BOOL) support;
+
+/* Whether open expression triggered stickers
+ * support：YES（Enable） NO(Disenable)
+ */
+- (void)onEnableSmiliesSticker:(BOOL) support;
 
 
 @end

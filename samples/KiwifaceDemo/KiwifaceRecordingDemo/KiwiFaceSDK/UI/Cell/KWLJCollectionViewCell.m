@@ -8,7 +8,8 @@
 
 #import "KWLJCollectionViewCell.h"
 #import "KWSticker.h"
-
+#import "KWConst.h"
+#import "UIImageView+WebCache.h"
 static NSString* KW_STICKER_DOWNLOADING_INDICATOR = @"circle.png";
 static NSString* KW_STICKER_ICON_DOWNLOADING = @"DownStickerIcon.png";
 static NSString* KW_STICKER_ICON_SELECTED = @"yellowBorderBackground";
@@ -241,7 +242,7 @@ static NSString* KW_STICKER_ICON_DOWNLOADALL = @"download.png";
 ////        [self.contentView addSubview:_indicatorView];
 //    }
 //    return _indicatorView;
-//    
+//
 //}
 
 -(KWIndicatorView *)indicatorView
@@ -250,7 +251,7 @@ static NSString* KW_STICKER_ICON_DOWNLOADALL = @"download.png";
         _indicatorView=[[KWIndicatorView alloc]initWithTintColor:[UIColor whiteColor] size:self.imgView.frame.size.width - 8];
         
         [self.contentView addSubview:_indicatorView];
-
+        
     }
     return _indicatorView;
     
@@ -261,16 +262,16 @@ static NSString* KW_STICKER_ICON_DOWNLOADALL = @"download.png";
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-
+        
         self.backgroundView = self.backView;
-
+        
         self.imgView.frame = CGRectMake(6 , 6, (CGRectGetWidth(self.frame)) - 10, CGRectGetWidth(self.frame) - 10);
-
+        
         self.downloadView.frame = CGRectMake(self.bounds.size.width - 13, self.bounds.size.height - 13, 13, 13);
         
-//        self.indicatorView.frame = self.imgView.frame;
+        //        self.indicatorView.frame = self.imgView.frame;
         self.indicatorView.center = self.imgView.center;
-
+        
         
     }
     return self;
@@ -279,11 +280,12 @@ static NSString* KW_STICKER_ICON_DOWNLOADALL = @"download.png";
 - (void)setSticker:(KWSticker *)sticker index:(NSInteger)index
 {
     _sticker = sticker;
+    [self.imgView sd_cancelCurrentImageLoad];
     if (index == 0) {
         self.imgView.image = [UIImage imageNamed:KW_STICKER_ICON_NONE];
         self.downloadView.image = nil;
-
-     
+        
+        
         if (self.indicatorView.animating == YES) {
             [self.indicatorView stopAnimating];
         }
@@ -291,17 +293,27 @@ static NSString* KW_STICKER_ICON_DOWNLOADALL = @"download.png";
     }else if (index == 1){
         self.imgView.image = [UIImage imageNamed:KW_STICKER_ICON_DOWNLOADALL];
         self.downloadView.image = nil;
-
+        
         
         if (self.indicatorView.animating == YES) {
             [self.indicatorView stopAnimating];
         }
         
     }else {
+        //        self.imgView.image = [UIImage imageNamed:sticker.stickerIcon];
+//        dispatch_queue_t queue = dispatch_queue_create("Sticker_Queue",NULL);
+//        dispatch_async(queue, ^{
+//            NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",StickerIconPath,sticker.stickerIcon]]];
+//            
+//            dispatch_after(1, dispatch_get_main_queue(), ^{
+//                self.imgView.image = [UIImage imageWithData:data];
+//            });
+//        });
+        
+        [self.imgView sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",StickerIconPath,sticker.stickerIcon]]];
         
         
         
-        self.imgView.image = [UIImage imageNamed:sticker.stickerIcon];
         self.downloadView.image = [UIImage imageNamed:KW_STICKER_ICON_DOWNLOADING];
         
         if (sticker.isDownload == YES) {
@@ -342,7 +354,7 @@ static NSString* KW_STICKER_ICON_DOWNLOADALL = @"download.png";
     self.sticker.downloadState = KWStickerDownloadStateDownoading;
     self.downloadView.hidden = YES;
     [self.indicatorView startAnimating];
-
+    
 }
 
 

@@ -11,10 +11,12 @@
 #import "KWDICollectionViewCell.h"
 #import "KWTextCollectionViewCell.h"
 #import "KWStickerDownloadManager.h"
-
+#import "KWPresentStickerRenderer.h"
+#import "UIDevice+DeviceModel.h"
 
 static NSString *KWDICollectionViewCellIdentifier = @"KWDICollectionViewCellIdentifier";
 static NSString *KWLJCollectionViewCellIdentifier = @"KWLJCollectionViewCellIdentifier";
+static NSString *KWPresentStickerCollectionViewCellIdentifier = @"KWPresentStickerCollectionViewCellIdentifier";
 static NSString *KWTextCollectionViewCellIdentifier = @"KWTextCollectionViewCellIdentifier";
 
 @interface KiwiFaceSDK_UI()<UICollectionViewDelegate,UICollectionViewDataSource>
@@ -93,7 +95,7 @@ center button
 /**
  The navigation bar at the bottom of the screen
  */
-@property (nonatomic, strong) UIView *mainMenuView;
+@property (nonatomic, strong) UIScrollView *mainMenuView;
 
 /**
  Sets the global beauty view
@@ -150,6 +152,8 @@ face sculpting parameter selection bar
  */
 @property (nonatomic, strong) UIView *beautifyNewView;
 
+@property (nonatomic, strong) UIView *presentStickerMenuView;
+
 /**
  Sticker Select view
  */
@@ -183,6 +187,8 @@ face sculpting parameter selection bar
 //New beauty parameters menu button
 @property (nonatomic, strong) UIButton *beautifyNewBtn;
 
+@property (nonatomic, strong) UIButton *presentStickerBtn;
+
 
 /* Sticker Selects the item collection control */
 @property (nonatomic, strong) UICollectionView *stickersCollectionView;
@@ -193,13 +199,27 @@ face sculpting parameter selection bar
 /* Global beauty filter Selects the collection control */
 @property (nonatomic, strong) UICollectionView *globalBeatifyFilterCollectionView;
 
+@property (nonatomic, strong) UICollectionView *presentStickerCollectionView;
+
 /* Beauty is turned on */
 @property (nonatomic, strong) UILabel *beautifyEnableStateLab;
+
 
 /* Pull bar beauty turned on */
 @property (nonatomic, strong) UILabel *slideBeautifyEnableStateLab;
 
-@property (nonatomic, assign)UIDeviceOrientation oldScreenMode;
+@property (nonatomic, assign) UIDeviceOrientation oldScreenMode;
+
+/* presentSticker of the button */
+@property (nonatomic, strong) UIButton *presentSwitchBtn;
+
+@property (nonatomic, strong) UIButton *smiliesSwitchBtn;
+
+/* Taking photos of the button */
+@property (nonatomic, strong) UIButton *takePhotoBtn;
+
+@property (nonatomic, strong) UILabel *smiliesStateText;
+
 
 @end
 
@@ -231,7 +251,7 @@ KiwiFaceSDK_UI *kiwiSdkUI;
 - (void)setViewDelegate:(UIViewController *)delegate
 {
     if (self) {
-        self.ActionViewController = delegate;
+        self.actionViewController = delegate;
     }
 }
 
@@ -242,13 +262,13 @@ KiwiFaceSDK_UI *kiwiSdkUI;
 - (void)initSDKUI
 {
     self.oldScreenMode = UIDeviceOrientationUnknown;
-    if (self.ActionViewController != nil) {
+    if (self.actionViewController != nil) {
         if (self.isClearOldUI) {
             [self clearAllViewsInController];
         }
         
         if (self.previewView) {
-            [self.ActionViewController.view addSubview:self.previewView];
+            [self.actionViewController.view addSubview:self.previewView];
         }
         
         tapView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, ScreenWidth_KW, ScreenHeight_KW)];
@@ -260,33 +280,52 @@ KiwiFaceSDK_UI *kiwiSdkUI;
         UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(viewOnTap:)];
         [tapView addGestureRecognizer:recognizer];
         
-        [_ActionViewController.view addSubview:tapView];
+        [_actionViewController.view addSubview:tapView];
         
         [tapView setHidden:YES];
         
-        [_ActionViewController.view addSubview:self.toggleBtn];
+        [_actionViewController.view addSubview:self.closeVideoBtn];
         
-        [_ActionViewController.view addSubview:self.closeVideoBtn];
+        [_actionViewController.view addSubview:self.takePhotoBtn];
         
-        [_ActionViewController.view addSubview:self.offPhoneBtn];
+        [_actionViewController.view addSubview:self.presentSwitchBtn];
         
-        [_ActionViewController.view addSubview:self.openStickerSetBtn];
+        [_actionViewController.view addSubview:self.smiliesSwitchBtn];
         
-        [_ActionViewController.view addSubview:self.openFilterSetBtn];
+        [_actionViewController.view addSubview:self.toggleBtn];
         
-        [_ActionViewController.view addSubview:self.beautifyFilterView];
+        [_actionViewController.view addSubview:self.offPhoneBtn];
         
-        [_ActionViewController.view addSubview:self.stickerMenuView];
+        [_actionViewController.view addSubview:self.openStickerSetBtn];
         
-        [_ActionViewController.view addSubview:self.distortionMenuView];
+        [_actionViewController.view addSubview:self.openFilterSetBtn];
         
-        [_ActionViewController.view addSubview:self.beautifyNewView];
+        [_actionViewController.view addSubview:self.beautifyFilterView];
         
-        [_ActionViewController.view addSubview:self.slideBeautifyMenuView];
+        [_actionViewController.view addSubview:self.stickerMenuView];
         
-        [_ActionViewController.view addSubview:self.filterGlobalView];
+        [_actionViewController.view addSubview:self.distortionMenuView];
         
-        [_ActionViewController.view addSubview:self.mainMenuView];
+        [_actionViewController.view addSubview:self.beautifyNewView];
+        
+        [_actionViewController.view addSubview:self.slideBeautifyMenuView];
+        
+        [_actionViewController.view addSubview:self.presentStickerMenuView];
+        
+        [_actionViewController.view addSubview:self.filterGlobalView];
+        
+        [_actionViewController.view addSubview:self.mainMenuView];
+        
+        [_actionViewController.view addSubview:self.smiliesStateText];
+        
+        NSLog(@"%lf",[[UIScreen mainScreen] bounds].size.width);
+        NSLog(@",%lf",[[UIScreen mainScreen] bounds].size.height);
+        
+        if ([[[UIDevice currentDevice] deviceModel] isEqualToString:@"iPhone 5"]) {
+             //低频率捕捉人脸开关
+            self.kwSdk.renderer.isLowFrequencyTracker = YES;
+        }
+        
         
         [self.kwSdk initDefaultParams];
         
@@ -301,21 +340,32 @@ KiwiFaceSDK_UI *kiwiSdkUI;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stickersLoadedComplete:) name:@"KW_STICKERSLOADED_COMPLETE" object:nil];
         
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(colorfiltersLoadedComplete:) name:@"KW_COLORFILTERSLOADED_COMPLETE" object:nil];
+        
+        
+        
     }
 }
 
 - (void)stickersLoadedComplete:(NSNotification *)noti
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [self.stickersCollectionView reloadData];
-        [self.stickersCollectionView scrollsToTop];
-    });
+    
+    [self.stickersCollectionView reloadData];
+    [self.stickersCollectionView scrollsToTop];
+    
+    [self.presentStickerCollectionView reloadData];
+    [self.presentStickerCollectionView scrollsToTop];
+}
+
+- (void)colorfiltersLoadedComplete:(NSNotification *)noti
+{
+    [self.globalBeatifyFilterCollectionView reloadData];
+    [self.globalBeatifyFilterCollectionView scrollsToTop];
 }
 
 - (void)clearAllViewsInController
 {
-    for (UIView *subView in _ActionViewController.view.subviews) {
+    for (UIView *subView in _actionViewController.view.subviews) {
         [subView removeFromSuperview];
     }
 }
@@ -444,7 +494,8 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     [self.distortionOptionsBtn setSelected:NO];
     [self.beautifyNewBtn setSelected:NO];
     [self.slideGlobalBeautifyOptionsBtn setSelected:NO];
-    //    [self.pointBtn setSelected:NO];
+    [self.presentStickerBtn setSelected:NO];
+        [self.pointBtn setSelected:NO];
 }
 
 - (void)resetScreemMode
@@ -492,19 +543,31 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     return _toggleBtn;
 }
 
+/* Taking photos of the button */
+- (UIButton *)takePhotoBtn
+{
+    if (!_takePhotoBtn) {
+        _takePhotoBtn = [[UIButton alloc]initWithFrame:CGRectMake(ScreenWidth_KW - 15 - 30, 15, 30, 24)];
+        [_takePhotoBtn setImage:[UIImage imageNamed:@"takephoto_sys"] forState:UIControlStateNormal];
+        [_takePhotoBtn addTarget:self action:@selector(takePhotoBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _takePhotoBtn;
+}
+
 - (UIButton *)closeVideoBtn
 {
     if (!_closeVideoBtn) {
-        _closeVideoBtn = [[UIButton alloc]initWithFrame:CGRectMake(15, 15, 100, 20)];
+        _closeVideoBtn = [[UIButton alloc]initWithFrame:CGRectMake(15, 15, 24, 24)];
         
-        [_closeVideoBtn setTitle:@"关闭" forState:UIControlStateNormal];
-        
-        
-        [_closeVideoBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        
-        [_closeVideoBtn.titleLabel setFont:[UIFont systemFontOfSize:15.f]];
-        
-        [_closeVideoBtn.titleLabel setTextAlignment:NSTextAlignmentLeft];
+        [_closeVideoBtn setImage:[UIImage imageNamed:@"closeVideo_sys"] forState:UIControlStateNormal];
+
+//        [_closeVideoBtn setTitle:@"关闭" forState:UIControlStateNormal];
+//        
+//        [_closeVideoBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//        
+//        [_closeVideoBtn.titleLabel setFont:[UIFont systemFontOfSize:15.f]];
+//        
+//        [_closeVideoBtn.titleLabel setTextAlignment:NSTextAlignmentLeft];
         
         [_closeVideoBtn setHidden:YES];
         
@@ -518,6 +581,7 @@ KiwiFaceSDK_UI *kiwiSdkUI;
 {
     if (!_offPhoneBtn) {
         _offPhoneBtn = [[UIButton alloc]initWithFrame:CGRectMake((ScreenWidth_KW - 81) / 2, ScreenHeight_KW - 23 - 81, 81, 81)];
+        
         _offPhoneBtn.layer.cornerRadius = 40.5f;
         
         _offPhoneBtn.layer.masksToBounds = YES;
@@ -534,35 +598,51 @@ KiwiFaceSDK_UI *kiwiSdkUI;
 {
     if (!_openStickerSetBtn) {
         _openStickerSetBtn = [[UIButton alloc]initWithFrame:CGRectMake(41, ScreenHeight_KW - 45 - 38, 38, 38)];
+        
         [_openStickerSetBtn setImage:[UIImage imageNamed:@"mask"] forState:UIControlStateNormal];
+        
         [_openStickerSetBtn addTarget:self action:@selector(openStickerSetBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _openStickerSetBtn;
 }
+
 
 /* Open the filter selection menu button*/
 - (UIButton *)openFilterSetBtn
 {
     if (!_openFilterSetBtn) {
         _openFilterSetBtn = [[UIButton alloc]initWithFrame:CGRectMake(ScreenWidth_KW - 38 - 44, ScreenHeight_KW - 45 - 38, 38, 38)];
+        
         [_openFilterSetBtn setImage:[UIImage imageNamed:@"filter"] forState:UIControlStateNormal];
+        
         [_openFilterSetBtn addTarget:self action:@selector(openFilterSetBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _openFilterSetBtn;
 }
 
 /* The navigation bar at the bottom of the screen */
-- (UIView *)mainMenuView
+- (UIScrollView *)mainMenuView
 {
     if (!_mainMenuView) {
-        _mainMenuView = [[UIView alloc]initWithFrame:CGRectMake(0, ScreenHeight_KW , ScreenWidth_KW, 56)];
+        _mainMenuView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, ScreenHeight_KW , ScreenWidth_KW, 56)];
+        
         [_mainMenuView setBackgroundColor:RGBACOLOR(0, 0, 0, 0.9)];
+        
+        _mainMenuView.contentSize = CGSizeMake(ScreenWidth_KW / 5 * 6, 56);
+        
         [_mainMenuView addSubview:self.beautifyOptionsBtn];
+        
         [_mainMenuView addSubview:self.stickerOptionsBtn];
+        
         [_mainMenuView addSubview:self.distortionOptionsBtn];
+        
         [_mainMenuView addSubview:self.slideGlobalBeautifyOptionsBtn];
-        //        [_mainMenuView addSubview:self.pointBtn];
+        
+        [_mainMenuView addSubview:self.pointBtn];
+        
         [_mainMenuView addSubview:self.beautifyNewBtn];
+        
+//        [_mainMenuView addSubview:self.presentStickerBtn];
     }
     return _mainMenuView;
 }
@@ -833,6 +913,8 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     }
     return _beautifyNewView;
 }
+
+
 
 /* 拉条新美颜 选择view */
 - (UIView *)slideBeautifyMenuView
@@ -1209,6 +1291,21 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     return _distortionMenuView;
 }
 
+/* 礼物贴纸选择view */
+- (UIView *)presentStickerMenuView
+{
+    if (!_presentStickerMenuView) {
+        _presentStickerMenuView = [[UIView alloc]initWithFrame:CGRectMake(0, ScreenHeight_KW, ScreenWidth_KW, 185)];
+        
+        _presentStickerMenuView.userInteractionEnabled = YES;
+        
+        [_presentStickerMenuView setBackgroundColor:RGBACOLOR(0, 0, 0, 0.2)];
+        
+        [_presentStickerMenuView addSubview:self.presentStickerCollectionView];
+    }
+    return _presentStickerMenuView;
+}
+
 /* 打开贴纸设置的 按钮 */
 - (UIButton *)stickerOptionsBtn
 {
@@ -1263,11 +1360,25 @@ KiwiFaceSDK_UI *kiwiSdkUI;
         [_beautifyNewBtn setImage:[UIImage imageNamed:@"meiyan"] forState:UIControlStateNormal];
         
         [_beautifyNewBtn setImage:[UIImage imageNamed:@"meiyanliang"] forState:UIControlStateSelected];
-        //        [_pointBtn setHidden:YES];
+
         [_beautifyNewBtn addTarget:self action:@selector(beautifyNewBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _beautifyNewBtn;
 }
+
+/* 点阵 按钮 */
+- (UIButton *)pointBtn
+{
+    if (!_pointBtn) {
+        _pointBtn = [[UIButton alloc]initWithFrame:CGRectMake((ScreenWidth_KW - 46 * 5) / 6 * 6 + 46 * 5, 6, 46, 46)];
+        [_pointBtn setImage:[UIImage imageNamed:@"face drk"] forState:UIControlStateNormal];
+        [_pointBtn setImage:[UIImage imageNamed:@"face"] forState:UIControlStateSelected];
+//        [_pointBtn setHidden:YES];
+        [_pointBtn addTarget:self action:@selector(pointBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _pointBtn;
+}
+
 
 /* 打开拉条全局美颜参数设置的 按钮 */
 - (UIButton *)slideGlobalBeautifyOptionsBtn
@@ -1284,7 +1395,78 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     return _slideGlobalBeautifyOptionsBtn;
 }
 
+/* 礼物贴纸参数设置菜单按钮 （暂时弃用） */
+- (UIButton *)presentStickerBtn
+{
+    if (!_presentStickerBtn) {
+        
+        _presentStickerBtn = [[UIButton alloc]initWithFrame:CGRectMake((ScreenWidth_KW - 46 * 5) / 6 * 6 + 46 * 5, 6, 46, 46)];
+        
+        [_presentStickerBtn setImage:[UIImage imageNamed:@"presentSticker_sys"] forState:UIControlStateNormal];
+        
+        [_presentStickerBtn setImage:[UIImage imageNamed:@"presentStickerDown_sys"] forState:UIControlStateSelected];
 
+        [_presentStickerBtn addTarget:self action:@selector(presentStickerBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _presentStickerBtn;
+}
+
+/* 礼物贴纸 启动按钮 */
+- (UIButton *)presentSwitchBtn
+{
+    if (!_presentSwitchBtn) {
+        _presentSwitchBtn = [[UIButton alloc]initWithFrame:CGRectMake(ScreenWidth_KW - 61, 60, 46, 46)];
+        
+        [_presentSwitchBtn setImage:[UIImage imageNamed:@"presentSticker_sys"] forState:UIControlStateNormal];
+        
+        [_presentSwitchBtn setImage:[UIImage imageNamed:@"presentStickerDown_sys"] forState:UIControlStateHighlighted];
+        
+        [_presentSwitchBtn setImage:[UIImage imageNamed:@"presentStickerDown_sys"] forState:UIControlStateSelected];
+        
+        [_presentSwitchBtn setImage:[UIImage imageNamed:@"presentStickerDown_sys"] forState:UIControlStateDisabled];
+
+        [_presentSwitchBtn addTarget:self action:@selector(presentSwitchBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _presentSwitchBtn;
+}
+
+/* 表情贴纸 开关按钮 */
+- (UIButton *)smiliesSwitchBtn
+{
+    if (!_smiliesSwitchBtn) {
+        _smiliesSwitchBtn = [[UIButton alloc]initWithFrame:CGRectMake(ScreenWidth_KW - 61, 120, 46, 46)];
+        
+        [_smiliesSwitchBtn setImage:[UIImage imageNamed:@"smiliesSticker_sys"] forState:UIControlStateNormal];
+        
+        [_smiliesSwitchBtn setImage:[UIImage imageNamed:@"smiliesStickerDown_sys"] forState:UIControlStateHighlighted];
+        
+        [_smiliesSwitchBtn setImage:[UIImage imageNamed:@"smiliesStickerDown_sys"] forState:UIControlStateSelected];
+        
+        [_smiliesSwitchBtn setImage:[UIImage imageNamed:@"smiliesStickerDown_sys"] forState:UIControlStateDisabled];
+        
+        [_smiliesSwitchBtn addTarget:self action:@selector(smiliesSwitchBtnOnClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _smiliesSwitchBtn;
+}
+
+/* 表情开关打开时 显示的 UI提示 */
+- (UILabel *)smiliesStateText
+{
+    if (!_smiliesStateText) {
+        _smiliesStateText = [[UILabel alloc]init];
+        
+        _smiliesStateText.frame = CGRectMake((ScreenWidth_KW - 100) / 2, (ScreenHeight_KW - 20) / 2, 100, 20);
+        
+        [_smiliesStateText setFont:[UIFont systemFontOfSize:18.f]];
+        
+        [_smiliesStateText setTextColor:[UIColor whiteColor]];
+        
+        [_smiliesStateText setText:@"请张大嘴巴"];
+        
+        [_smiliesStateText setHidden:YES];
+    }
+    return _smiliesStateText;
+}
 
 #pragma mark -- 按钮点击事件处理
 
@@ -1299,8 +1481,16 @@ KiwiFaceSDK_UI *kiwiSdkUI;
 - (void)closeVideoBtnOnClick:(UIButton *)sender
 {
     [self closeVideoWindow];
+    
+    
 }
 
+- (void)takePhotoBtnOnClick:(UIButton *)sender
+{
+    if (self.takePhotoBtnTapBlock) {
+        self.takePhotoBtnTapBlock(sender);
+    } 
+}
 
 - (void)offPhoneBtnOnClick:(UIButton *)sender
 {
@@ -1382,10 +1572,17 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     [self actionMainMenuChange:sender];
 }
 
+- (void)presentStickerBtnOnClick:(UIButton *)sender
+{
+    [self.kwSdk onEnableDrawPoints:NO];
+    [self actionMainMenuChange:sender];
+}
+
 - (void)pointBtnOnClick:(UIButton *)sender
 {
     //开启描点
     [self.kwSdk onEnableDrawPoints:!sender.isSelected];
+    
     //关闭二级弹窗
     [self actionMainMenuChange:sender];
     
@@ -1395,15 +1592,74 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     
     //刷新列表选择项状态
     [self.stickersCollectionView reloadData];
+    
     [self.distortionCollectionView reloadData];
+    
+    [self.presentStickerCollectionView reloadData];
     
     //关闭美颜功能
     [self.kwSdk onEnableBeauty:self.enableFilterParmasBtn.isSelected];
 }
 
+- (void)smiliesSwitchBtnOnClick:(UIButton *)sender
+{
+    [sender setSelected:!sender.isSelected];
+    [self.kwSdk onEnableSmiliesSticker:sender.isSelected];
+    [self.smiliesStateText setHidden:!sender.isSelected];
+    
+}
+
+- (void)presentSwitchBtnOnClick:(UIButton *)sender
+{
+    if (!sender.isSelected) {
+        [sender setSelected:YES];
+        
+        [self.kwSdk.renderer removeFilter:self.kwSdk.filters[2]];
+        
+        [((KWPresentStickerRenderer *)self.kwSdk.filters[2]) setSticker:nil];
+        
+        
+        self.kwSdk.currentPresentStickerIndex = 1;
+        KWSticker *lastSticker = self.kwSdk.presentStickers[self.kwSdk.currentPresentStickerIndex];
+        //设置播放次数
+        [lastSticker setPlayCount:1];
+        //贴纸帧数置零 将贴纸重新播放
+        for (KWStickerItem *item in lastSticker.items) {
+            item.currentFrameIndex = 0;
+            item.accumulator = 0;
+        }
+        [((KWPresentStickerRenderer *)self.kwSdk.filters[2]) setSticker:lastSticker];
+        //设置播放结束后的自定义动作
+        __weak typeof (self) __weakSelf = self;
+        //礼物贴纸 默认设置为跟脸 渲染
+        ((KWPresentStickerRenderer *)self.kwSdk.filters[2]).needTrackData = YES;
+        ((KWPresentStickerRenderer *)self.kwSdk.filters[2]).presentStickerRendererPlayOverBlock = ^()
+        {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [__weakSelf.presentSwitchBtn setSelected:NO];
+            });
+            
+//            [((KWPresentStickerRenderer *)(__weakSelf.kwSdk.filters[2])).sticker setPlayCount:0];
+            //移除相应filter
+            [__weakSelf.kwSdk.renderer removeFilter:__weakSelf.kwSdk.filters[2]];
+            
+        };
+        
+        if (self.kwSdk.currentPresentStickerIndex >= 0 && self.kwSdk.currentPresentStickerIndex < self.kwSdk.presentStickers.count + 1)
+        {
+            [(KWPresentStickerRenderer *)self.kwSdk.filters[2] setSticker:self.kwSdk.presentStickers[self.kwSdk.currentPresentStickerIndex]];
+            
+            [self.kwSdk.renderer addFilter:self.kwSdk.filters[2]];
+        }
+        else {
+            [(KWPresentStickerRenderer *)self.kwSdk.filters[2] setSticker:nil];
+        }
+        
+    }
+}
+
 - (void)actionMainMenuChange:(UIButton *)sender
 {
-    
     /* 更新按钮状态 */
     BOOL isSelected = sender.isSelected;
     [self disableAllMainMenuBtn];
@@ -1440,6 +1696,10 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     else if([sender isEqual:self.slideGlobalBeautifyOptionsBtn])
     {
         self.NextPopView = self.slideBeautifyMenuView;
+    }
+    else if([sender isEqual:self.presentStickerBtn])
+    {
+        self.NextPopView = self.presentStickerMenuView;
     }
     [self lockMenuBtn:NO];
     
@@ -1526,7 +1786,9 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     
     [self.pointBtn setEnabled:isEnable];
     
-    [self.pointBtn setEnabled:isEnable];
+    [self.slideGlobalBeautifyOptionsBtn setEnabled:isEnable];
+    
+    [self.presentStickerBtn setEnabled:isEnable];
 }
 
 - (void)showMenuSubView:(UIView *)view
@@ -1794,14 +2056,20 @@ KiwiFaceSDK_UI *kiwiSdkUI;
             sticker.downloadState = KWStickerDownloadStateDownoadDone;
             [self.kwSdk.stickers replaceObjectAtIndex:index withObject:sticker];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.stickersCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:index + 2 inSection:0]]];
+                
+                for (NSIndexPath *path in self.stickersCollectionView.indexPathsForVisibleItems) {
+                    if (index == path.item) {
+                        [self.stickersCollectionView  reloadData];
+                        break;
+                    }
+                }
+                
                 
             });
         } failed:^(KWSticker *sticker, NSInteger index) {
             sticker.downloadState = KWStickerDownloadStateDownoadNot;
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.stickersCollectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:index + 2 inSection:0]]];
-                
+                [self.stickersCollectionView reloadData];
                 // TODO: 提示用户网络不给力
             });
         }];
@@ -1833,10 +2101,16 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     else if(collectionView == self.globalBeatifyFilterCollectionView)
     {
         if (section == 0) {
-            count = [self.kwSdk.globalBeatifyFilterTitleInfosArr count];
+            count = [self.kwSdk.lookupFilters count] + 1;
         }
     }
-    
+    else if(collectionView == self.presentStickerCollectionView)
+    {
+        if (section == 0) {
+            count = self.kwSdk.presentStickers.count + 2;
+        }
+    }
+
     return count;
 }
 /* 定义展示的Section的个数 */
@@ -1857,8 +2131,6 @@ KiwiFaceSDK_UI *kiwiSdkUI;
         cell = [collectionView dequeueReusableCellWithReuseIdentifier:KWLJCollectionViewCellIdentifier forIndexPath:indexPath];
         
         [cell sizeToFit];
-        
-        
         
         if (indexPath.item <= 1) {
             
@@ -1897,14 +2169,55 @@ KiwiFaceSDK_UI *kiwiSdkUI;
         cell = [collectionView dequeueReusableCellWithReuseIdentifier:KWTextCollectionViewCellIdentifier forIndexPath:indexPath];
         
         [cell sizeToFit];
+        NSString *name;
+        UIImage *icon;
+        if (indexPath.row == 0) {
+            icon = [UIImage imageNamed:@"artwork master"];
+            name = @"Origin";
+        }
+        else
+        {
+            name = ((KWColorFilter *)self.kwSdk.lookupFilters[indexPath.item - 1]).colorFilterName;
+        icon = [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@%@",((KWColorFilter *)self.kwSdk.lookupFilters[indexPath.item - 1]).colorFilterDir,@"thumb.png"]];
+        }
         
-        ((KWTextCollectionViewCell *)cell).imageView.image = [UIImage imageNamed:self.kwSdk.globalBeatifyFilterTitleInfosArr[indexPath.item]];
-        
-        [((KWTextCollectionViewCell *)cell).label setText:self.kwSdk.textArr[indexPath.item]];
         
         
-        if (indexPath.row == 1) {
+        ((KWTextCollectionViewCell *)cell).imageView.image = icon;
+        
+        [((KWTextCollectionViewCell *)cell).label setText:name];
+        
+        
+        if (indexPath.row == 0) {
             [cell setSelected:YES];
+        }
+    }
+    else if(collectionView == self.presentStickerCollectionView)
+    {
+        cell = [collectionView dequeueReusableCellWithReuseIdentifier:KWPresentStickerCollectionViewCellIdentifier forIndexPath:indexPath];
+        
+        [cell sizeToFit];
+        
+        
+        
+        if (indexPath.item <= 1) {
+            
+            [((KWLJCollectionViewCell *)cell) setSticker:nil index:indexPath.item];
+            
+        }else{
+            
+            KWSticker *sticker = self.kwSdk.presentStickers[indexPath.item - 2];
+            
+            [((KWLJCollectionViewCell *)cell) setSticker:sticker index:indexPath.item];
+            
+        }
+        
+        if (self.kwSdk.currentPresentStickerIndex == indexPath.item - 2) {
+            [((KWLJCollectionViewCell *)cell) hideBackView:NO];
+            
+        }else{
+            [((KWLJCollectionViewCell *)cell) hideBackView:YES];
+            
         }
     }
     
@@ -1946,7 +2259,21 @@ KiwiFaceSDK_UI *kiwiSdkUI;
                     [self.kwSdk.stickers replaceObjectAtIndex:index withObject:sticker];
                     //回到主线程刷新
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:index + 2 inSection:0]]];
+                        
+                        
+                        
+                        if (collectionView) {
+                            
+                            for (NSIndexPath *path in collectionView.indexPathsForVisibleItems) {
+                                if (index == path.item) {
+                                    [collectionView reloadData];
+                                    break;
+                                }
+                            } 
+                            
+                            
+                        }
+                        
                         
                     });
                     
@@ -1954,7 +2281,7 @@ KiwiFaceSDK_UI *kiwiSdkUI;
                     sticker.downloadState = KWStickerDownloadStateDownoadNot;
                     //回到主线程刷新
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:index + 2 inSection:0]]];
+                        [collectionView reloadData];
                         
                         // TODO: 提示用户网络不给力
                     });
@@ -1973,6 +2300,7 @@ KiwiFaceSDK_UI *kiwiSdkUI;
         
         //渲染指定贴纸
         [self.kwSdk onStickerChanged:indexPath.item - 2];
+//        [self.kwSdk onPresentStickerChanged:indexPath.item - 2];
         
         //显示选中cell的背景
         KWLJCollectionViewCell *cell = (KWLJCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
@@ -1999,6 +2327,73 @@ KiwiFaceSDK_UI *kiwiSdkUI;
         if (defaultCell.isSelected) {
             [defaultCell setSelected:NO];
         }
+    }
+    else if (collectionView == self.presentStickerCollectionView)
+    {
+        if (indexPath.item == 1) {
+            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"一键下载" message:@"可一键下载所有贴纸哦^_^" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"下载", nil];
+            [alertView show];
+            return;
+        }
+        
+        //选中同一个cell不做处理
+        if (self.kwSdk.currentPresentStickerIndex == indexPath.item - 2) {
+            return;
+        }
+        
+        if (indexPath.item > 1) {
+            
+            KWSticker *sticker = self.kwSdk.presentStickers[indexPath.item - 2];
+            if (sticker.isDownload == NO) {
+                
+                
+                [[KWStickerDownloadManager sharedInstance] downloadSticker:sticker index:indexPath.item - 2 withAnimation:^(NSInteger index) {
+                    
+                    NSIndexPath *indexPath = [NSIndexPath indexPathForItem:index + 2 inSection:0];
+                    KWLJCollectionViewCell *cell = (KWLJCollectionViewCell*)[self.presentStickerCollectionView cellForItemAtIndexPath:indexPath];
+                    [cell startDownload];
+                    
+                } successed:^(KWSticker *sticker, NSInteger index) {
+                    
+                    sticker.downloadState = KWStickerDownloadStateDownoadDone;
+                    [self.kwSdk.presentStickers replaceObjectAtIndex:index withObject:sticker];
+                    //回到主线程刷新
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [collectionView reloadData];
+                        
+                    });
+                    
+                } failed:^(KWSticker *sticker, NSInteger index) {
+                    sticker.downloadState = KWStickerDownloadStateDownoadNot;
+                    //回到主线程刷新
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [collectionView reloadData];
+                        
+                        // TODO: 提示用户网络不给力
+                    });
+                }];
+                
+                
+                
+                return;
+            }
+        }
+        
+        //隐藏上次选中cell的背景
+        NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.kwSdk.currentPresentStickerIndex + 2 inSection:0];
+        KWLJCollectionViewCell *lastCell = (KWLJCollectionViewCell *)[collectionView cellForItemAtIndexPath:lastPath];
+        [lastCell hideBackView:YES];
+        
+        //渲染指定贴纸
+        //        [self.kwSdk onStickerChanged:indexPath.item - 2];
+        [self.kwSdk onPresentStickerChanged:indexPath.item - 2];
+        
+        //显示选中cell的背景
+        KWLJCollectionViewCell *cell = (KWLJCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
+        [cell hideBackView:NO];
+        
+        //不刷新会导致背景框显示错误
+        [collectionView reloadItemsAtIndexPaths:@[indexPath,lastPath]];
     }
 }
 
@@ -2110,10 +2505,163 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     return _globalBeatifyFilterCollectionView;
 }
 
+/*  */
+-(UICollectionView *)presentStickerCollectionView
+{
+    if (!_presentStickerCollectionView) {
+        UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
+        //定义每个UICollectionCell 的大小
+        //        flowLayout.itemSize = CGSizeMake(ScreenWidth_KW*(49/ScreenWidth_KW), ScreenWidth_KW*(49/ScreenWidth_KW));
+        //        flowLayout.itemSize = CGSizeMake(49, 49);
+        flowLayout.itemSize = CGSizeMake((ScreenWidth_KW)/7, (ScreenWidth_KW)/7);
+        //定义每个UICollectionCell 横向的间距
+        flowLayout.minimumLineSpacing = 10;
+        //定义每个UICollectionCell 纵向的间距
+        flowLayout.minimumInteritemSpacing = 10;
+        //定义每个UICollectionCell 的边距距
+        flowLayout.sectionInset = UIEdgeInsetsMake(20, 20, 20, 20);//上左下右
+        
+        _presentStickerCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, ScreenWidth_KW, 185) collectionViewLayout:flowLayout];
+        
+        //注册cell
+        [_presentStickerCollectionView registerClass:[KWLJCollectionViewCell class] forCellWithReuseIdentifier:KWPresentStickerCollectionViewCellIdentifier];
+        
+        //设置代理
+        _presentStickerCollectionView.delegate = self;
+        _presentStickerCollectionView.dataSource = self;
+        
+        //背景颜色
+        _presentStickerCollectionView.backgroundColor = [UIColor clearColor];
+        //自适应大小
+        _presentStickerCollectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
+    return _presentStickerCollectionView;
+}
+
++ (void)releaseManager
+{
+    [KiwiFaceSDK_UI shareManagerUI].currentPopView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].NextPopView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].currentMainMenuPopView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].NextMainMenuPopView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].toggleBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].closeVideoBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].offPhoneBtn = nil;
+    
+
+    [KiwiFaceSDK_UI shareManagerUI].openStickerSetBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].openFilterSetBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].mainMenuView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].filterGlobalView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].enableFilterParmasBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].enableBeautifyFilterParmasBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].beautifyFilterView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].sliderEyeMagnifying = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].sliderFaceSculpting = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].NewBeautifySliderWhitening = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].NewBeautifySliderMicrodermabrasion = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].NewBeautifySliderSaturation = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].NewBeautifySliderPinkistender = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].beautifyNewView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].presentStickerMenuView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].stickerMenuView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].distortionMenuView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].slideBeautifyMenuView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].beautifyOptionsBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].stickerOptionsBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].distortionOptionsBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].slideGlobalBeautifyOptionsBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].pointBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].beautifyNewBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].presentStickerBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].stickersCollectionView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].distortionCollectionView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].globalBeatifyFilterCollectionView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].presentStickerCollectionView = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].beautifyEnableStateLab = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].slideBeautifyEnableStateLab = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].presentSwitchBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].smiliesSwitchBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].takePhotoBtn = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].toggleBtnBlock = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].closeVideoBtnBlock = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].offPhoneBlock = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].takePhotoBtnTapBlock = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].actionViewController = nil;
+    
+    [KiwiFaceSDK_UI shareManagerUI].previewView = nil;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"KW_STICKERSLOADED_COMPLETE" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"KW_COLORFILTERSLOADED_COMPLETE" object:nil];
+    
+    
+    kiwiSdkUI = nil;
+}
+
+- (void)setCloseBtnEnable:(BOOL) enable
+{
+    [self.closeVideoBtn setEnabled:enable];
+}
+
 - (void)dealloc
 {
     [self popAllView];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"KW_STICKERSLOADED_COMPLETE" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"KW_COLORFILTERSLOADED_COMPLETE" object:nil];
+    tapView = nil;
+    btnBeautify1 = nil;
+    btnBeautify2 = nil;
+    btnBeautify3 = nil;
+    btnBeautify4 = nil;
+    
+    kiwiSdkUI = nil;
+    
+    
 }
 
 @end

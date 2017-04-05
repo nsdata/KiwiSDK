@@ -19,6 +19,7 @@
 #define KW_E_TRACK_FAILED -9               //跟踪失败
 #define KW_E_NETCERTIFICATION_FAILED -10   //网络验证失败
 #define KW_E_NULL_KEY_STRING -11           //空的密钥
+#define KW_E_NULL_FACERSTS -12             //返回结果内存没有初始化
 
 extern "C"
 {
@@ -46,6 +47,11 @@ extern "C"
         float yaw;			///< 水平转角，真实度量的左负右正
         float pitch;			///< 俯仰角，真实度量的上负下正
         float roll;			///< 旋转角，真实度量的左负右正
+        bool mouth_open;    ///大张嘴标志位,   false-闭嘴     true-张嘴
+        bool brow_up;       ///眉毛表情标志位, false-不动     true-上扬
+        bool eye_status;    ///眼睛表情标志位, false-张开     true-闭眼
+        bool head_yaw;
+        bool head_pithch;
     } result_68_t, *p_result_68_t;
     
     typedef enum {

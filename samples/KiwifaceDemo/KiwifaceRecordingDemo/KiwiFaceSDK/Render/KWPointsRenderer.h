@@ -1,6 +1,6 @@
 //
 //  KWPointsRenderer.h
-//  PLMediaStreamingKitDemo
+//  KiwiFaceKitDemo
 //
 //  Created by ChenHao on 2016/11/26.
 //  Copyright © 2016年 0dayZh. All rights reserved.

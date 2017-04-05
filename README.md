@@ -1,10 +1,10 @@
-# KWAgoraDemo_iOS
+# KWFaceDemo_iOS
 Kiwi人脸跟踪及特效（贴纸、美颜、滤镜、哈哈镜）在声网SDK中的集成demo - iOS版
 
 ## 
 
 ## 一：功能特点
-#### 连麦功能
+#### 录制功能
 
 ## 二. 运行环境
 
@@ -13,9 +13,9 @@ Kiwi人脸跟踪及特效（贴纸、美颜、滤镜、哈哈镜）在声网SDK�
 
 ## 三. 开发指南
 
- [Wiki](https://github.com/kiwi-face/KWQiniuDemo_iOS/blob/master/doc/ios-instruction.md)                                                                                                                                                                                                                         
+ [Wiki](https://github.com/kiwi-face/KWFaceDemo_iOS/blob/master/doc/ios-instruction.md)                                                                                                                                                                                                                         
 
 ## 四. 反馈与建议
 
-- Issues: [https://github.com/kiwi-face/KWQiniuDemo_iOS/issues](https://github.com/kiwi-face/KWQiniuDemo_iOS/issues)
+- Issues: [https://github.com/kiwi-face/KWFaceDemo_iOS/issues](https://github.com/kiwi-face/KWFaceDemo_iOS/issues)
 
