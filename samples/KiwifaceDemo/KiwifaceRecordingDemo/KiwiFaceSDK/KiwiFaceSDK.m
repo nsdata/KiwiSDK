@@ -64,6 +64,10 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
     return sharedAccountManagerInstance;
 }
 
+//+(void)modelPath{
+//    sharedAccountManagerInstance.renderer = [KWRenderer new];
+//}
+
 + (void)releaseManager
 {
     [(KWStickerRenderer *)sharedAccountManagerInstance.filters[1] setSticker:nil];
@@ -275,9 +279,6 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
 - (void)initDefaultParams
 {
     [self onEnableBeauty:YES];
-    
-   
-    
 }
 
 /******
@@ -301,7 +302,6 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
     {
         [self.renderer removeFilter:self.filters[0]];
     }
-    
 }
 
 /* 哈哈镜切换

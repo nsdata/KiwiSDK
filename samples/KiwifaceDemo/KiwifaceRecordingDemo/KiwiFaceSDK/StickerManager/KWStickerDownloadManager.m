@@ -10,8 +10,7 @@
 #import "KWSticker.h"
 #import "SSZipArchive.h"
 #import "KWStickerManager.h"
-
-#define KWStickerDownloadBaseURL @"http://oimad4qgn.bkt.clouddn.com/test"
+#import "KWConst.h"
 
 @interface KWStickerDownloader : NSObject<SSZipArchiveDelegate,NSURLSessionDelegate>
 @property (nonatomic, strong) NSURLSession *session;

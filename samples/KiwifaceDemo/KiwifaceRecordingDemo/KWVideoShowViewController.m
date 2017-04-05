@@ -605,7 +605,34 @@
     
     UIImage *newPic = UIGraphicsGetImageFromCurrentImageContext();
     
+    if (!self.kwSdkUI.kwSdk.cameraPositionBack) {
+        newPic = [self convertMirrorImage:newPic];
+    }
+    
+    
     return newPic;
+}
+
+- (UIImage *)convertMirrorImage:(UIImage *)image
+{
+    
+    //Quartz重绘图片
+    CGRect rect =  CGRectMake(0, 0, image.size.width , image.size.height);//创建矩形框
+    //根据size大小创建一个基于位图的图形上下文
+    UIGraphicsBeginImageContextWithOptions(rect.size, false, 2);
+    CGContextRef currentContext =  UIGraphicsGetCurrentContext();//获取当前quartz 2d绘图环境
+    CGContextClipToRect(currentContext, rect);//设置当前绘图环境到矩形框
+    CGContextRotateCTM(currentContext, (CGFloat)M_PI); //旋转180度
+    //平移， 这里是平移坐标系，跟平移图形是一个道理
+    CGContextTranslateCTM(currentContext, -rect.size.width, -rect.size.height);
+    CGContextDrawImage(currentContext, rect, image.CGImage);//绘图
+    
+    //翻转图片
+    UIImage *drawImage =  UIGraphicsGetImageFromCurrentImageContext();//获得图片
+    UIImage *flipImage =  [[UIImage alloc]initWithCGImage:drawImage.CGImage];
+    
+    
+    return flipImage;
 }
 
 - (void)dealloc

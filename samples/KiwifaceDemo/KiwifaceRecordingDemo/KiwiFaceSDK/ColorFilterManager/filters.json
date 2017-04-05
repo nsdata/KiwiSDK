@@ -1,18 +1,13 @@
 {
   "filters": [
+      {
+      "name": "cold",
+      "dir": "cold",
+      "category": "default"
+      },
     {
       "name": "1960s",
       "dir": "1960s",
-      "category": "default"
-    },
-    {
-      "name": "blueberry",
-      "dir": "blueberry",
-      "category": "default"
-    },
-    {
-      "name": "blush",
-      "dir": "blush",
       "category": "default"
     },
     {
@@ -26,33 +21,8 @@
       "category": "default"
     },
     {
-      "name": "cold",
-      "dir": "cold",
-      "category": "default"
-    },
-    {
-      "name": "color",
-      "dir": "color",
-      "category": "default"
-    },
-    {
-      "name": "curious",
-      "dir": "curious",
-      "category": "default"
-    },
-    {
-      "name": "daisy",
-      "dir": "daisy",
-      "category": "default"
-    },
-    {
       "name": "dark",
       "dir": "dark",
-      "category": "default"
-    },
-    {
-      "name": "delicious",
-      "dir": "delicious",
       "category": "default"
     },
     {
@@ -63,16 +33,6 @@
     {
       "name": "frog",
       "dir": "frog",
-      "category": "default"
-    },
-    {
-      "name": "fuji",
-      "dir": "fuji",
-      "category": "default"
-    },
-    {
-      "name": "fun",
-      "dir": "fun",
       "category": "default"
     },
     {
@@ -101,11 +61,6 @@
       "category": "default"
     },
     {
-      "name": "huang",
-      "dir": "huang",
-      "category": "default"
-    },
-    {
       "name": "kc",
       "dir": "kc",
       "category": "default"
@@ -113,11 +68,6 @@
     {
       "name": "lagoon",
       "dir": "lagoon",
-      "category": "default"
-    },
-    {
-      "name": "light",
-      "dir": "light",
       "category": "default"
     },
     {
@@ -133,16 +83,6 @@
     {
       "name": "misty",
       "dir": "misty",
-      "category": "default"
-    },
-    {
-      "name": "naive",
-      "dir": "naive",
-      "category": "default"
-    },
-    {
-      "name": "nice",
-      "dir": "nice",
       "category": "default"
     },
     {
@@ -181,11 +121,6 @@
       "category": "default"
     },
     {
-      "name": "rainday",
-      "dir": "rainday",
-      "category": "default"
-    },
-    {
       "name": "red",
       "dir": "red",
       "category": "default"
@@ -193,16 +128,6 @@
     {
       "name": "retro",
       "dir": "retro",
-      "category": "default"
-    },
-    {
-      "name": "siesta",
-      "dir": "siesta",
-      "category": "default"
-    },
-    {
-      "name": "spring",
-      "dir": "spring",
       "category": "default"
     },
     {
@@ -220,20 +145,5 @@
       "dir": "turkish",
       "category": "default"
     },
-    {
-      "name": "warm",
-      "dir": "warm",
-      "category": "default"
-    },
-    {
-      "name": "yellow",
-      "dir": "yellow",
-      "category": "default"
-    },
-    {
-      "name": "yummy",
-      "dir": "yummy",
-      "category": "default"
-    }
   ]
 }
