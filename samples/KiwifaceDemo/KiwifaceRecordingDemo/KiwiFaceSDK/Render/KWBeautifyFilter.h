@@ -1,5 +1,5 @@
 //
-//  GPUImageBeautifyFilter2.h
+//  KWBeautifyFilter2.h
 //  ASRSticker
 //
 //  Created by ChenHao on 16/8/3.
@@ -12,7 +12,7 @@
 /**
  Grading adjustment beauty
  */
-@interface GPUImageBeautifyFilter : GPUImageFilter<KWRenderProtocol>
+@interface KWBeautifyFilter : GPUImageFilter<KWRenderProtocol>
 {
 //    GLfloat levelUniform;
 }

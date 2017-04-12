@@ -18,12 +18,13 @@
 		16883DB41E45CA3D0016210E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16883DB31E45CA3D0016210E /* AVFoundation.framework */; };
 		16883DB91E45CAA70016210E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16883DB81E45CAA70016210E /* Foundation.framework */; };
 		16E0B50D1E4862E8000D9A91 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 16E0B50C1E4862E8000D9A91 /* Default-568h@2x.png */; };
+		BE2DA7B31E9CFA6A000C47A7 /* libfaceTrackerSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE2DA7B21E9CFA6A000C47A7 /* libfaceTrackerSDK.a */; };
+		BE2DA7B51E9CFCC5000C47A7 /* libKwSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE2DA7B41E9CFCC5000C47A7 /* libKwSDK.a */; };
 		BE4809C11E7BE03900FAFDF7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 16883DB11E45CA0C0016210E /* libz.tbd */; };
 		BE481E5D1E94A43200FAFDF7 /* filters.json in Resources */ = {isa = PBXBuildFile; fileRef = BE481B961E94A43100FAFDF7 /* filters.json */; };
 		BE481E601E94A43200FAFDF7 /* libGPUImage_release.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE481C431E94A43100FAFDF7 /* libGPUImage_release.a */; };
 		BE481E611E94A43200FAFDF7 /* KiwiFaceSDK.m in Sources */ = {isa = PBXBuildFile; fileRef = BE481C451E94A43100FAFDF7 /* KiwiFaceSDK.m */; };
 		BE481E621E94A43200FAFDF7 /* KiwiFaceSDK_UI.m in Sources */ = {isa = PBXBuildFile; fileRef = BE481C471E94A43100FAFDF7 /* KiwiFaceSDK_UI.m */; };
-		BE481E631E94A43200FAFDF7 /* libKiwiFaceSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE481C481E94A43200FAFDF7 /* libKiwiFaceSDK.a */; };
 		BE481E641E94A43200FAFDF7 /* compare.cc in Sources */ = {isa = PBXBuildFile; fileRef = BE481C621E94A43200FAFDF7 /* compare.cc */; };
 		BE481E651E94A43200FAFDF7 /* compare_common.cc in Sources */ = {isa = PBXBuildFile; fileRef = BE481C631E94A43200FAFDF7 /* compare_common.cc */; };
 		BE481E661E94A43200FAFDF7 /* compare_gcc.cc in Sources */ = {isa = PBXBuildFile; fileRef = BE481C641E94A43200FAFDF7 /* compare_gcc.cc */; };
@@ -97,7 +98,6 @@
 		BE481F1D1E94A43300FAFDF7 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = BE481D571E94A43200FAFDF7 /* zip.c */; };
 		BE481F1E1E94A43300FAFDF7 /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = BE481D5A1E94A43200FAFDF7 /* SSZipArchive.m */; };
 		BE481F1F1E94A43300FAFDF7 /* UIDevice+DeviceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BE481D5C1E94A43200FAFDF7 /* UIDevice+DeviceModel.m */; };
-		BE481F211E94A43300FAFDF7 /* libfaceTrackerSDK_rea1l.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE481D601E94A43200FAFDF7 /* libfaceTrackerSDK_rea1l.a */; };
 		BE481F271E94A43300FAFDF7 /* KWDICollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BE481D6A1E94A43200FAFDF7 /* KWDICollectionViewCell.m */; };
 		BE481F281E94A43300FAFDF7 /* KWLJCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BE481D6C1E94A43200FAFDF7 /* KWLJCollectionViewCell.m */; };
 		BE481F291E94A43300FAFDF7 /* KWTextCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BE481D6E1E94A43200FAFDF7 /* KWTextCollectionViewCell.m */; };
@@ -298,6 +298,9 @@
 		16883DB31E45CA3D0016210E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		16883DB81E45CAA70016210E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		16E0B50C1E4862E8000D9A91 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		BE2DA7B21E9CFA6A000C47A7 /* libfaceTrackerSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libfaceTrackerSDK.a; sourceTree = "<group>"; };
+		BE2DA7B41E9CFCC5000C47A7 /* libKwSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libKwSDK.a; sourceTree = "<group>"; };
+		BE2DA7B61E9D01A0000C47A7 /* KWBeautifyFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWBeautifyFilter.h; sourceTree = "<group>"; };
 		BE481B961E94A43100FAFDF7 /* filters.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = filters.json; sourceTree = "<group>"; };
 		BE481B981E94A43100FAFDF7 /* KWColorFilterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWColorFilterManager.h; sourceTree = "<group>"; };
 		BE481B9A1E94A43100FAFDF7 /* GLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLProgram.h; sourceTree = "<group>"; };
@@ -471,7 +474,6 @@
 		BE481C451E94A43100FAFDF7 /* KiwiFaceSDK.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KiwiFaceSDK.m; sourceTree = "<group>"; };
 		BE481C461E94A43100FAFDF7 /* KiwiFaceSDK_UI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KiwiFaceSDK_UI.h; sourceTree = "<group>"; };
 		BE481C471E94A43100FAFDF7 /* KiwiFaceSDK_UI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KiwiFaceSDK_UI.m; sourceTree = "<group>"; };
-		BE481C481E94A43200FAFDF7 /* libKiwiFaceSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libKiwiFaceSDK.a; sourceTree = "<group>"; };
 		BE481C4C1E94A43200FAFDF7 /* basic_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = basic_types.h; sourceTree = "<group>"; };
 		BE481C4D1E94A43200FAFDF7 /* compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compare.h; sourceTree = "<group>"; };
 		BE481C4E1E94A43200FAFDF7 /* compare_row.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compare_row.h; sourceTree = "<group>"; };
@@ -539,7 +541,6 @@
 		BE481C8D1E94A43200FAFDF7 /* video_common.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = video_common.cc; sourceTree = "<group>"; };
 		BE481C901E94A43200FAFDF7 /* ETDistortionFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETDistortionFilter.h; sourceTree = "<group>"; };
 		BE481C911E94A43200FAFDF7 /* FatFaceDistortionFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FatFaceDistortionFilter.h; sourceTree = "<group>"; };
-		BE481C921E94A43200FAFDF7 /* GPUImageBeautifyFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUImageBeautifyFilter.h; sourceTree = "<group>"; };
 		BE481C931E94A43200FAFDF7 /* KWColorFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWColorFilter.h; sourceTree = "<group>"; };
 		BE481C941E94A43200FAFDF7 /* KWPointsRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWPointsRenderer.h; sourceTree = "<group>"; };
 		BE481C951E94A43200FAFDF7 /* KWPresentStickerRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWPresentStickerRenderer.h; sourceTree = "<group>"; };
@@ -619,7 +620,6 @@
 		BE481D5B1E94A43200FAFDF7 /* UIDevice+DeviceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+DeviceModel.h"; sourceTree = "<group>"; };
 		BE481D5C1E94A43200FAFDF7 /* UIDevice+DeviceModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+DeviceModel.m"; sourceTree = "<group>"; };
 		BE481D5E1E94A43200FAFDF7 /* FaceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FaceTracker.h; sourceTree = "<group>"; };
-		BE481D601E94A43200FAFDF7 /* libfaceTrackerSDK_rea1l.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libfaceTrackerSDK_rea1l.a; sourceTree = "<group>"; };
 		BE481D691E94A43200FAFDF7 /* KWDICollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWDICollectionViewCell.h; sourceTree = "<group>"; };
 		BE481D6A1E94A43200FAFDF7 /* KWDICollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KWDICollectionViewCell.m; sourceTree = "<group>"; };
 		BE481D6B1E94A43200FAFDF7 /* KWLJCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWLJCollectionViewCell.h; sourceTree = "<group>"; };
@@ -812,11 +812,11 @@
 			files = (
 				BE4809C11E7BE03900FAFDF7 /* libz.tbd in Frameworks */,
 				16883DB91E45CAA70016210E /* Foundation.framework in Frameworks */,
-				BE481F211E94A43300FAFDF7 /* libfaceTrackerSDK_rea1l.a in Frameworks */,
 				BE481E601E94A43200FAFDF7 /* libGPUImage_release.a in Frameworks */,
-				BE481E631E94A43200FAFDF7 /* libKiwiFaceSDK.a in Frameworks */,
 				BE576B2D1E76B8160091FDB5 /* opencv2.framework in Frameworks */,
+				BE2DA7B51E9CFCC5000C47A7 /* libKwSDK.a in Frameworks */,
 				16883DB41E45CA3D0016210E /* AVFoundation.framework in Frameworks */,
+				BE2DA7B31E9CFA6A000C47A7 /* libfaceTrackerSDK.a in Frameworks */,
 				16883DB01E45C9FC0016210E /* AssetsLibrary.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -884,6 +884,7 @@
 		BE481B3E1E94A43100FAFDF7 /* KiwiFaceSDK */ = {
 			isa = PBXGroup;
 			children = (
+				BE2DA7B41E9CFCC5000C47A7 /* libKwSDK.a */,
 				BE481FD81E94A59100FAFDF7 /* RELEASE.md */,
 				BE481B3F1E94A43100FAFDF7 /* ColorFilterManager */,
 				BE481B991E94A43100FAFDF7 /* GPUImage */,
@@ -891,7 +892,6 @@
 				BE481C451E94A43100FAFDF7 /* KiwiFaceSDK.m */,
 				BE481C461E94A43100FAFDF7 /* KiwiFaceSDK_UI.h */,
 				BE481C471E94A43100FAFDF7 /* KiwiFaceSDK_UI.m */,
-				BE481C481E94A43200FAFDF7 /* libKiwiFaceSDK.a */,
 				BE481C491E94A43200FAFDF7 /* NV12YUV */,
 				BE481C8F1E94A43200FAFDF7 /* Render */,
 				BE481CA11E94A43200FAFDF7 /* StickerManager */,
@@ -1201,9 +1201,9 @@
 		BE481C8F1E94A43200FAFDF7 /* Render */ = {
 			isa = PBXGroup;
 			children = (
+				BE2DA7B61E9D01A0000C47A7 /* KWBeautifyFilter.h */,
 				BE481C901E94A43200FAFDF7 /* ETDistortionFilter.h */,
 				BE481C911E94A43200FAFDF7 /* FatFaceDistortionFilter.h */,
-				BE481C921E94A43200FAFDF7 /* GPUImageBeautifyFilter.h */,
 				BE481C931E94A43200FAFDF7 /* KWColorFilter.h */,
 				BE481C941E94A43200FAFDF7 /* KWPointsRenderer.h */,
 				BE481C951E94A43200FAFDF7 /* KWPresentStickerRenderer.h */,
@@ -1328,9 +1328,9 @@
 		BE481D5D1E94A43200FAFDF7 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				BE2DA7B21E9CFA6A000C47A7 /* libfaceTrackerSDK.a */,
 				BE481FE01E94C07400FAFDF7 /* models */,
 				BE481D5E1E94A43200FAFDF7 /* FaceTracker.h */,
-				BE481D601E94A43200FAFDF7 /* libfaceTrackerSDK_rea1l.a */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";

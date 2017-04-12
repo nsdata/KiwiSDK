@@ -1883,7 +1883,7 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     if (sender.tag > 0) {
         [self lockSlideBeautifyView:YES];
         
-        [((GPUImageBeautifyFilter *)(self.kwSdk.beautifyNewFilters[0])) setBeautifyLevel:(float)sender.tag];
+        [((KWBeautifyFilter *)(self.kwSdk.beautifyNewFilters[0])) setBeautifyLevel:(float)sender.tag];
         [self.kwSdk.renderer addFilter:self.kwSdk.beautifyNewFilters[0]];
         
     }

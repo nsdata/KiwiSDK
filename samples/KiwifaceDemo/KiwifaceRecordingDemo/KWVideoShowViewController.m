@@ -43,6 +43,7 @@
     UIButton *btnRecord;//临时申请的按钮控件指针 控制是否可用。
 }
 
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -107,10 +108,11 @@
             [__weakSelf.kwSdkUI popAllView];
             
             
-//            __weakSelf.kwSdkUI.kwSdk.renderer = nil;
-//            __weakSelf.kwSdkUI.kwSdk = nil;
-            [KiwiFaceSDK releaseManager];
+            [__weakSdkUI.kwSdk.videoCamera stopCameraCapture];
+            /* 内存释放 */
             [KiwiFaceSDK_UI releaseManager];
+            [KiwiFaceSDK releaseManager];
+            
             
         }];
     };
@@ -543,6 +545,15 @@
     
     
     [self.kwSdkUI.kwSdk.renderer processPixelBuffer:pixelBuffer withRotation:cvMobileRotate mirrored:mirrored];
+    
+    if (!self.kwSdkUI.kwSdk.renderer.trackResultState) {
+        NSLog(@"没有捕捉到人脸！！！！！！！！！！！！！！！！！！！！！！！！！");
+    }
+    else
+    {
+        NSLog(@"捕捉到人脸！！！！！！！！！！！！！！！！！！！！！！！！！");
+    }
+    
     
     /*********** 如果有拍照功能则必须加上 ***********/
     self.outputImage =  [CIImage imageWithCVPixelBuffer:pixelBuffer];

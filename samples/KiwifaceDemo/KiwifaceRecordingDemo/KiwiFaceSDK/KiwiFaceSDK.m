@@ -15,7 +15,7 @@
 #import "ETDistortionFilter.h"
 #import "KWPointsRenderer.h"
 #import "PearFaceDistortionFilter.h"
-#import "GPUImageBeautifyFilter.h"
+#import "KWBeautifyFilter.h"
 #import "SquareFaceDistortionFilter.h"
 #import "SmallFaceBigEyeFilter.h"
 
@@ -184,7 +184,7 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
                                  ];
         
         self.beautifyNewFilters = @[
-                                    [GPUImageBeautifyFilter new],
+                                    [KWBeautifyFilter new],
                                     [NewBeautyFilter new]
                                     ];
 
