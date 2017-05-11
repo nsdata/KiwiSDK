@@ -1,6 +1,6 @@
 //
 //  KWRenderer.h
-//  KiwiFaceKitDemo
+//  PLMediaStreamingKitDemo
 //
 //  Created by ChenHao on 2016/11/29.
 //  Copyright © 2016年 0dayZh. All rights reserved.
@@ -14,7 +14,7 @@
 #import "KWStickerRenderer.h"
 
 #import "SquareFaceDistortionFilter.h"
-#import "GPUImageBeautifyFilter.h"
+#import "KWBeautifyFilter.h"
 #import "KWColorFilter.h"
 #import "SmallFaceBigEyeFilter.h"
 
@@ -53,19 +53,19 @@ typedef void (^RenderAndGetFacePointsBlock)(unsigned char *pixels, int format, i
 
 @property (nonatomic, copy)RenderAndGetFacePointsBlock kwRenderBlock;
 
+//@property (nonatomic,assign) NSInteger trackResultState;
+
+@property (nonatomic,assign) BOOL trackResultState;
 
 - (void)addFilter:(GPUImageOutput<GPUImageInput, KWRenderProtocol> *)filter;
-
 - (void)removeFilter:(GPUImageOutput<GPUImageInput, KWRenderProtocol> *)filter;
 
 - (void)removeAllFilters;
 
-//获取目前正在使用的滤镜数量
 - (NSInteger)getAllUsingFiltersCount;
 
 - (void)processPixelBuffer:(CVPixelBufferRef)pixelBuffer withRotation:(cv_rotate_type)rotation mirrored:(BOOL)isMirrored;
 
-//检查tracker是否初始化失败
 + (BOOL)isSdkInitFailed;
 
 //检查表情贴纸是否正在播放

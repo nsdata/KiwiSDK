@@ -1082,11 +1082,12 @@ KiwiFaceSDK_UI *kiwiSdkUI;
         _sliderEyeMagnifying.minimumValue = 0.05;
         
         //大眼指定可变最大值
-        _sliderEyeMagnifying.maximumValue = 0.3;
+//        _sliderEyeMagnifying.maximumValue = 0.3;
+        _sliderEyeMagnifying.maximumValue = 0.2;
         
         //大眼指定初始值
-        _sliderEyeMagnifying.value = 0.10;
-        
+//        _sliderEyeMagnifying.value = 0.10;
+        _sliderEyeMagnifying.value = 0.08;
         [self.kwSdk onBeautyParamsChanged:KW_BEAUTYPARAMS_TYPE_BULGEEYE Value:_sliderEyeMagnifying.value];
 
         [_sliderEyeMagnifying setMinimumTrackImage:[UIImage imageNamed:@"wire"] forState:UIControlStateNormal];
@@ -1113,11 +1114,13 @@ KiwiFaceSDK_UI *kiwiSdkUI;
         _sliderFaceSculpting.minimumValue = 0.90;
         
         //瘦脸指定可变最大值
-        _sliderFaceSculpting.maximumValue = 1.00f;
+//        _sliderFaceSculpting.maximumValue = 1.00f;
+        _sliderFaceSculpting.maximumValue = 0.95f;
         
         //瘦脸指定初始值
-        _sliderFaceSculpting.value = 1.90 - 0.97;
-        [self.kwSdk onBeautyParamsChanged:KW_BEAUTYPARAMS_TYPE_THINFACE Value:_sliderFaceSculpting.value];
+//        _sliderFaceSculpting.value = 1.90 - 0.97;
+        _sliderFaceSculpting.value = 1.90 - 0.98;
+        [self.kwSdk onBeautyParamsChanged:KW_BEAUTYPARAMS_TYPE_THINFACE Value:1.90f - _sliderFaceSculpting.value];
         [_sliderFaceSculpting setMinimumTrackImage:[UIImage imageNamed:@"wire"] forState:UIControlStateNormal];
         [_sliderFaceSculpting setMaximumTrackImage:[UIImage imageNamed:@"wire drk"] forState:UIControlStateNormal];
         
@@ -1880,7 +1883,7 @@ KiwiFaceSDK_UI *kiwiSdkUI;
     if (sender.tag > 0) {
         [self lockSlideBeautifyView:YES];
         
-        [((GPUImageBeautifyFilter *)(self.kwSdk.beautifyNewFilters[0])) setBeautifyLevel:(float)sender.tag];
+        [((KWBeautifyFilter *)(self.kwSdk.beautifyNewFilters[0])) setBeautifyLevel:(float)sender.tag];
         [self.kwSdk.renderer addFilter:self.kwSdk.beautifyNewFilters[0]];
         
     }

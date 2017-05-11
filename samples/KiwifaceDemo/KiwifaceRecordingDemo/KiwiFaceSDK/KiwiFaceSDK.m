@@ -15,7 +15,7 @@
 #import "ETDistortionFilter.h"
 #import "KWPointsRenderer.h"
 #import "PearFaceDistortionFilter.h"
-#import "GPUImageBeautifyFilter.h"
+#import "KWBeautifyFilter.h"
 #import "SquareFaceDistortionFilter.h"
 #import "SmallFaceBigEyeFilter.h"
 
@@ -63,6 +63,10 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
     //    });
     return sharedAccountManagerInstance;
 }
+
+//+(void)modelPath{
+//    sharedAccountManagerInstance.renderer = [KWRenderer new];
+//}
 
 + (void)releaseManager
 {
@@ -180,7 +184,7 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
                                  ];
         
         self.beautifyNewFilters = @[
-                                    [GPUImageBeautifyFilter new],
+                                    [KWBeautifyFilter new],
                                     [NewBeautyFilter new]
                                     ];
 
@@ -275,9 +279,6 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
 - (void)initDefaultParams
 {
     [self onEnableBeauty:YES];
-    
-   
-    
 }
 
 /******
@@ -301,7 +302,6 @@ KiwiFaceSDK *sharedAccountManagerInstance = nil;
     {
         [self.renderer removeFilter:self.filters[0]];
     }
-    
 }
 
 /* 哈哈镜切换

@@ -66,4 +66,10 @@
 
 #define IsEnglish 1
 
-#define StickerIconPath @"http://oimad4qgn.bkt.clouddn.com/thumb/"
+//#define StickerIconPath @"http://oimad4qgn.bkt.clouddn.com/thumb/"
+
+//#define KWStickerDownloadBaseURL @"http://oimad4qgn.bkt.clouddn.com/test"
+#define KWStickerDownloadBaseURL @"https://omhooyf5o.qnssl.com"
+#define StickerIconPath @"https://omhopkmng.qnssl.com/"
+
+
