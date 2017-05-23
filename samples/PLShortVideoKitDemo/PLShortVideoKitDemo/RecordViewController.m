@@ -61,6 +61,7 @@
     
     self.kwSdkUI = [KWSDK_UI shareManagerUI];
     self.kwSdkUI.kwSdk = [KWSDK sharedManager];
+    self.kwSdkUI.kwSdk.renderer = [[KWRenderer alloc]initWithModelPath:self.modelPath];
     self.kwSdkUI.kwSdk.cameraPositionBack  = NO;
     
     if([KWRenderer isSdkInitFailed]){

@@ -12,4 +12,6 @@
 
 @property (nonatomic, strong) KWSDK_UI *kwSdkUI;
 
+@property (nonatomic,copy)NSString *modelPath;
+
 @end

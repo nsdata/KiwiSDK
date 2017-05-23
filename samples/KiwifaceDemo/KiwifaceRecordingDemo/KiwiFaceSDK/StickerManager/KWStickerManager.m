@@ -232,7 +232,7 @@
         
         KWSticker *sticker = [[KWSticker alloc]initWithName:[itemDict valueForKey:@"name"] thumbName:[itemDict valueForKey:@"thumb"] download:[[itemDict valueForKey:@"downloaded"] boolValue] DirectoryURL:url];
         if ([[itemDict valueForKey:@"sourceType"] intValue] == 0) {
-            sticker.sourceType = KWStickerSourceTypeFromKiwi;
+            sticker.sourceType = KWStickerSourceTypeFromKW;
         }else{
             sticker.sourceType = KWStickerSourceTypeFromLocal; 
         }

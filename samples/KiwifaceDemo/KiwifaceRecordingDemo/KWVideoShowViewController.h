@@ -7,14 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "KiwiFaceSDK_UI.h"
+#import "KWSDK_UI.h"
 
 @interface KWVideoShowViewController : UIViewController
 
 /**
  sdk UI action object
  */
-@property (nonatomic, strong) KiwiFaceSDK_UI *kwSdkUI;
+@property (nonatomic, strong) KWSDK_UI *kwSdkUI;
 
+@property (nonatomic,copy)NSString *modelPath;
 
 @end

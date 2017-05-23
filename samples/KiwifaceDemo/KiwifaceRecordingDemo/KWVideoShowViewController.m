@@ -11,11 +11,11 @@
 #import <AssetsLibrary/ALAssetsLibrary.h>
 #import <Foundation/Foundation.h>
 #import "FaceTracker.h"
-#import "KiwiFaceSDK.h"
+#import "KWSDK.h"
 
 #import "Global.h"
 
-@interface KWVideoShowViewController ()<GPUImageVideoCameraDelegate>
+@interface KWVideoShowViewController ()<GPUImageVideoCameraDelegate,KWSDKUIDelegate>
 @property (nonatomic, strong) GPUImageStillCamera *videoCamera;
 @property (nonatomic, strong) GPUImageMovieWriter *movieWriter;
 @property (nonatomic, strong) GPUImageView *previewView;
@@ -55,9 +55,12 @@
     [[UIApplication sharedApplication]setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     
     
+    self.kwSdkUI = [KWSDK_UI shareManagerUI];
+    self.kwSdkUI.delegate = self;
+    self.kwSdkUI.kwSdk = [KWSDK sharedManager];
     
-    self.kwSdkUI = [KiwiFaceSDK_UI shareManagerUI];
-    self.kwSdkUI.kwSdk = [KiwiFaceSDK sharedManager];
+    self.kwSdkUI.kwSdk.renderer = [[KWRenderer alloc]initWithModelPath:self.modelPath];
+
     self.kwSdkUI.kwSdk.cameraPositionBack  = NO;
     if([KWRenderer isSdkInitFailed]){
         //        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"错误提示" message:@"使用 license 文件生成激活码时失败，可能是授权文件过期。" delegate:nil cancelButtonTitle:@"好的" otherButtonTitles:nil, nil];
@@ -85,13 +88,12 @@
     __blockSelf = self;
     __weakSelf = __blockSelf;
     
-    __weak KiwiFaceSDK_UI *__weakSdkUI = self.kwSdkUI;
+    __weak KWSDK_UI *__weakSdkUI = self.kwSdkUI;
     __weakSdkUI.toggleBtnBlock = ^()
     {
         /* 切换摄像头 */
-
-                __weakSelf.kwSdkUI.kwSdk.cameraPositionBack  = !__weakSelf.kwSdkUI.kwSdk.cameraPositionBack;
-                [__weakSelf.videoCamera rotateCamera];
+        __weakSelf.kwSdkUI.kwSdk.cameraPositionBack  = !__weakSelf.kwSdkUI.kwSdk.cameraPositionBack;
+        [__weakSelf.videoCamera rotateCamera];
     };
     
     self.kwSdkUI.closeVideoBtnBlock = ^(void)
@@ -110,24 +112,24 @@
             
             [__weakSdkUI.kwSdk.videoCamera stopCameraCapture];
             /* 内存释放 */
-            [KiwiFaceSDK_UI releaseManager];
-            [KiwiFaceSDK releaseManager];
+            [KWSDK_UI releaseManager];
+            [KWSDK releaseManager];
             
             
         }];
     };
     //拍照
-    self.kwSdkUI.takePhotoBtnTapBlock = ^(UIButton *sender)
-    {
-        [__weakSelf takePhoto:sender];
-    };
+//    self.kwSdkUI.takePhotoBtnTapBlock = ^(UIButton *sender)
+//    {
+//        [__weakSelf takePhoto:sender];
+//    };
     
-    __weakSdkUI.offPhoneBlock = ^(UIButton *sender)
-    {
-        //录制视频
-        [__weakSelf recordVideo:sender];
-        
-    };
+//    __weakSdkUI.offPhoneBlock = ^(UIButton *sender)
+//    {
+//        //录制视频
+//        [__weakSelf recordVideo:sender];
+//        
+//    };
 
     [self.view addSubview:self.labRecordState];
     
@@ -137,6 +139,83 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)
                                                  name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
 
+}
+
+//拍照
+- (void)takePhoto
+{
+    if (self.outputImage) {
+        
+        /* 录制demo 前置摄像头修正图片朝向*/
+        UIImage *processedImage = [self image:[self convertBufferToImage] rotation:UIImageOrientationRight];
+        UIImageWriteToSavedPhotosAlbum(processedImage, self, @selector(image:finishedSavingWithError:contextInfo:), nil);
+    }
+}
+
+- (void)startRecording
+{
+    
+    [self.labRecordState setText:@"正在录制"];
+    [self.labRecordState setHidden:NO];
+    if (self.kwSdkUI.kwSdk.currentStickerIndex >= 0) {
+        [self.kwSdkUI.kwSdk.filters.lastObject addTarget:self.movieWriter];
+    } else if (self.kwSdkUI.kwSdk.currentDistortionFilter) {
+        [self.kwSdkUI.kwSdk.currentDistortionFilter addTarget:self.movieWriter];
+    } else if (self.kwSdkUI.kwSdk.currentColorFilter) {
+        [self.kwSdkUI.kwSdk.currentColorFilter addTarget:self.movieWriter];
+        
+    }
+    
+    self.videoCamera.audioEncodingTarget = self.movieWriter;
+    
+    [[NSFileManager defaultManager] removeItemAtURL:self.movieURL error:nil];
+    
+    [self.videoCamera startCameraCapture];
+    
+    [self.previewView setHidden:NO];
+    
+    [Global sharedManager].PIXCELBUFFER_ROTATE = KW_PIXELBUFFER_ROTATE_0;
+    
+    [self.kwSdkUI.kwSdk resetDistortionParams];
+    
+    [self.movieWriter startRecording];
+}
+
+
+- (void)endRecording
+{
+    [self.labRecordState setText:@"正在保存视频..."];
+    [self.kwSdkUI setCloseBtnEnable:NO];
+    if (self.kwSdkUI.kwSdk.currentStickerIndex >= 0) {
+        [self.kwSdkUI.kwSdk.filters.lastObject removeTarget:self.movieWriter];
+    }
+    if (self.kwSdkUI.kwSdk.currentDistortionFilter) {
+        [self.kwSdkUI.kwSdk.currentDistortionFilter removeTarget:self.movieWriter];
+    }
+    if (self.kwSdkUI.kwSdk.currentColorFilter) {
+        [self.kwSdkUI.kwSdk.currentColorFilter removeTarget:self.movieWriter];
+    }
+    
+    self.videoCamera.audioEncodingTarget = nil;
+    
+    [self.movieWriter finishRecordingWithCompletionHandler:^{
+        [self addWatermarkToVideo];
+    }];
+}
+
+-(void)didClickOffPhoneButton
+{
+    [self takePhoto];
+}
+
+-(void)didBeginLongPressOffPhoneButton
+{
+    [self startRecording];
+}
+
+-(void)didEndLongPressOffPhoneButton
+{
+    [self endRecording];
 }
 
 - (void)applicationWillResignActive:(NSNotification *)noti
@@ -397,8 +476,8 @@
         if (self.kwSdkUI.kwSdk.currentDistortionFilter) {
             [self.kwSdkUI.kwSdk.currentDistortionFilter removeTarget:self.movieWriter];
         }
-        if (self.kwSdkUI.kwSdk.currentLookupFilter) {
-            [self.kwSdkUI.kwSdk.currentLookupFilter removeTarget:self.movieWriter];
+        if (self.kwSdkUI.kwSdk.currentColorFilter) {
+            [self.kwSdkUI.kwSdk.currentColorFilter removeTarget:self.movieWriter];
         }
         
         self.videoCamera.audioEncodingTarget = nil;
@@ -415,8 +494,8 @@
             [self.kwSdkUI.kwSdk.filters.lastObject addTarget:self.movieWriter];
         } else if (self.kwSdkUI.kwSdk.currentDistortionFilter) {
             [self.kwSdkUI.kwSdk.currentDistortionFilter addTarget:self.movieWriter];
-        } else if (self.kwSdkUI.kwSdk.currentLookupFilter) {
-            [self.kwSdkUI.kwSdk.currentLookupFilter addTarget:self.movieWriter];
+        } else if (self.kwSdkUI.kwSdk.currentColorFilter) {
+            [self.kwSdkUI.kwSdk.currentColorFilter addTarget:self.movieWriter];
         }
         
         self.videoCamera.audioEncodingTarget = self.movieWriter;

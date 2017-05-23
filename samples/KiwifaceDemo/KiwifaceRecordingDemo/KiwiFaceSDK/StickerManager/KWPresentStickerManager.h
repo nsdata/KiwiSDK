@@ -20,7 +20,7 @@
 
 /**
  Asynchronous mode reads all the sticker information from the file
-
+ 
  @param completion Read the callback after completion
  */
 - (void)loadStickersWithCompletion:(void(^)(NSMutableArray<KWSticker *> *stickers))completion;
