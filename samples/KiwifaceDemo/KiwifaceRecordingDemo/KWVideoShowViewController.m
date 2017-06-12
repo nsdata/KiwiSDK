@@ -218,6 +218,7 @@
     [self endRecording];
 }
 
+
 - (void)applicationWillResignActive:(NSNotification *)noti
 {
     if (btnRecord.isSelected) {
