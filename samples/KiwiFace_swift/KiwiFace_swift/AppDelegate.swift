@@ -13,20 +13,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-//        window = UIWindow(frame: UIScreen.main.bounds)
+        window = UIWindow(frame: UIScreen.main.bounds)
 //        window?.backgroundColor = UIColor.white
 //        
 //        window?.rootViewController = rootViewController
 //        window?.makeKeyAndVisible()
         
-        window = UIWindow(frame: UIScreen.main.bounds)
+        window = UIWindow.init()
         window?.backgroundColor = UIColor.white
         let rootViewController = KiwiRootViewController.init()
         window?.rootViewController = rootViewController
         window?.makeKeyAndVisible()
+
         // Override point for customization after application launch.
         return true
     }
